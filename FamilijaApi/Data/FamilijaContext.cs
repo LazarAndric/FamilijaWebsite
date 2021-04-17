@@ -3,7 +3,7 @@ using FamilijaApi.Models;
 
 namespace FamilijaApi.Data
 {
-    class FamilijaContext : DbContext
+    public class FamilijaContext : DbContext
     {
         public FamilijaContext(DbContextOptions<FamilijaContext> options) : base (options)
         {
