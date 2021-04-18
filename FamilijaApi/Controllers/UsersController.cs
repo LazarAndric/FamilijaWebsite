@@ -8,6 +8,9 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
 using FailijaApi.Data;
+using FamilijaApi.DTOs;
+using AutoMapper;
+using AutoMapper.Configuration;
 
 namespace FamilijaApi.Controllers
 {
@@ -16,9 +19,11 @@ namespace FamilijaApi.Controllers
     public class UserController : ControllerBase
     {
         private IUserRepo _userRepo;
-        
-        public UserController(IUserRepo userRepo)
+        private IMapper _mapper;
+
+        public UserController(IUserRepo userRepo, IMapper mapper)
         {
+            _mapper = mapper;
             _userRepo=userRepo;
         }
 
@@ -32,12 +37,11 @@ namespace FamilijaApi.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<IEnumerable<User>>> GetById(int id){
-
+        public async Task<ActionResult<UserReadDTO>> GetById(int id){
             var response=await _userRepo.GetUserById(id);
             if(response==null)
                 return NoContent();
-            return Ok(response);
+            return Ok(_mapper.Map<UserReadDTO>(response));
         }
     }
 }
