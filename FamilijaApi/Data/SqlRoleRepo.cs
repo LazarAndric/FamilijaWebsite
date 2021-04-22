@@ -7,20 +7,11 @@ using System.Linq;
 
 namespace FamilijaApi.Data
 {
-    public class SqlRoleRepo : IUserRepo
+    public class SqlRoleRepo : IRoleRepo
     {
         private FamilijaContext _context;
         public SqlRoleRepo(FamilijaContext context){
             _context= context;
-        }
-        public async Task<IEnumerable<User>> GetAllItems()
-        {
-            return await _context.Users.ToArrayAsync();
-        }
-
-        public async Task<User> GetUserById(int id)
-        {
-            return await _context.Users.FirstOrDefaultAsync(item=> item.Id==id);
         }
     }
 }

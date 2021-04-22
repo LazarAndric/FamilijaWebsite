@@ -7,20 +7,11 @@ using System.Linq;
 
 namespace FamilijaApi.Data
 {
-    public class SqlContactRepo : IUserRepo
+    public class SqlContactRepo : IContactInfoRepo
     {
         private FamilijaContext _context;
         public SqlContactRepo(FamilijaContext context){
             _context= context;
-        }
-        public async Task<IEnumerable<User>> GetAllItems()
-        {
-            return await _context.Users.ToArrayAsync();
-        }
-
-        public async Task<User> GetUserById(int id)
-        {
-            return await _context.Users.FirstOrDefaultAsync(item=> item.Id==id);
         }
     }
 }

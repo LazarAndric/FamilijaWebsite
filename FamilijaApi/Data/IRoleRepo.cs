@@ -6,7 +6,5 @@ namespace FailijaApi.Data
 {
     public interface IRoleRepo
     {
-        Task<IEnumerable<User>> GetAllItems();
-        Task<User> GetUserById(int id);
     }
 }
