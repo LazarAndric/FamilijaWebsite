@@ -7,7 +7,15 @@ namespace FamilijaApi.Profiles
     public class ProfileMaps : Profile
     {
         public ProfileMaps(){
-            CreateMap<User, UserReadDTO>();
+            CreateMap<User, UserReadDto>();
+
+            CreateMap<Address, AddressReadDto>();
+
+            CreateMap<Contact, ContactReadDto>();
+
+            CreateMap<PersonalInfo, PersonalInfoReadDto>();
+
+            CreateMap<UserInfo, UserInfoReadDto>();
         }
     }
 }

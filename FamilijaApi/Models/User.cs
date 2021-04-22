@@ -6,8 +6,12 @@ namespace FamilijaApi.Models
     public class User
     {
         public int Id { get; set; }
-        public string Name { get; set; }
-        public DateTime Birthday { get; set; }
-        public int Age { get; set; }
+        [EmailAddress]
+        public string EMail { get; set; }
+        public string Password { get; set; }
+        public Contact Contact { get; set; }
+        public UserInfo UserInfo { get; set; }
+        public PersonalInfo Info { get; set; }
+        public Address Address { get; set; }
     }
 }
