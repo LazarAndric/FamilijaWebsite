@@ -14,14 +14,13 @@ using AutoMapper.Configuration;
 
 namespace FamilijaApi.Controllers
 {
-    [Route("api")]
     [ApiController]
-    public class UserController : ControllerBase
+    public class UsersController : ControllerBase
     {
         private IUserRepo _userRepo;
         private IMapper _mapper;
 
-        public UserController(IUserRepo userRepo, IMapper mapper)
+        public UsersController(IUserRepo userRepo, IMapper mapper)
         {
             _mapper = mapper;
             _userRepo=userRepo;
