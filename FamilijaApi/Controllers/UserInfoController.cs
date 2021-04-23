@@ -24,7 +24,7 @@ namespace FamilijaAPi.Coontrollers
             _userRepo=userRepo;
             _roleRepo=roleRepo;
         }
-
+        asd
         [HttpGet("{id}")]
         public async Task<ActionResult<UserInfoReadDto>> GetUserInfo( int id)
         {
