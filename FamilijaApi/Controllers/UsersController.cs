@@ -27,19 +27,19 @@ namespace FamilijaApi.Controllers
             _userRepo=userRepo;
         }
 
-        public async Task<ActionResult<List<UserReadDto>>> GeAlltUsers()
-        {
-            var items=await _userRepo.GetAllItems();
-            if(items==null)     return NoContent();
-            return Ok(_mapper.Map<List<UserReadDto>>(items));
+        // public async Task<ActionResult<List<UserReadDto>>> GeAlltUsers()
+        // {
+            // var items=await _userRepo.GetAllItems();
+            // if(items==null)     return NoContent();
+            // return Ok(_mapper.Map<List<UserReadDto>>(items));
 
-        }
+        // }
 
-        [HttpGet("{id}")]
-        public async Task<ActionResult<UserReadDto>> GetById(int id){
-            var response=await _userRepo.GetUserById(id);
-                if(response==null)      return NoContent();
-            return Ok(_mapper.Map<UserReadDto>(response));
-        }
+        // [HttpGet("{id}")]
+        // public async Task<ActionResult<UserReadDto>> GetById(int id){
+            // var response=await _userRepo.GetUserById(id);
+                // if(response==null)      return NoContent();
+            // return Ok(_mapper.Map<UserReadDto>(response));
+        // }
     }
 }
