@@ -1,7 +1,10 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace FamilijaApi.Models
 {
     public class UserInfo
     {
+        [Key]
         public int UserId { get; set; }
         public int ReferralId { get; set; }
         public User ReferralUser { get; set; }

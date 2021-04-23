@@ -6,5 +6,6 @@ namespace FailijaApi.Data
 {
     public interface IRoleRepo
     {
+        Task<Role> GetRole(int id);
     }
 }

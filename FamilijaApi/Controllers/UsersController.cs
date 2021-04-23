@@ -15,6 +15,7 @@ using AutoMapper.Configuration;
 namespace FamilijaApi.Controllers
 {
     [ApiController]
+    [Route("[Controller]")]
     public class UsersController : ControllerBase
     {
         private IUserRepo _userRepo;

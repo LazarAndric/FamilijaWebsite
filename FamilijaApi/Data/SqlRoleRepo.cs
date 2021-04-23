@@ -13,5 +13,10 @@ namespace FamilijaApi.Data
         public SqlRoleRepo(FamilijaContext context){
             _context= context;
         }
+
+        public async Task<Role> GetRole(int id)
+        {
+            return await _context.Roles.FirstOrDefaultAsync(role=> role.Id==id);
+        }
     }
 }

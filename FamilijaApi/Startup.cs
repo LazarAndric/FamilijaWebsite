@@ -31,6 +31,8 @@ namespace FamilijaApi
                 });
                 
             services.AddScoped<IUserRepo, SqlUserRepo>();
+            services.AddScoped<IUserInfoRepo, SqlUserInfoRepo>();
+            services.AddScoped<IRoleRepo, SqlRoleRepo>();
             
 
         }

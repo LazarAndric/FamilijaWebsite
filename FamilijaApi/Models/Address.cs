@@ -1,7 +1,10 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace FamilijaApi.Models
 {
     public class Address
     {
+        [Key]
         public int UserId { get; set; }
         public string Place { get; set; }
         public string Street { get; set; }

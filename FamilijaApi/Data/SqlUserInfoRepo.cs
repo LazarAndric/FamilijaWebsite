@@ -13,5 +13,11 @@ namespace FamilijaApi.Data
         public SqlUserInfoRepo(FamilijaContext context){
             _context= context;
         }
+
+        public async Task<UserInfo> GetUserInfo(int id)
+        {
+            
+            return await _context.UserInfo.FirstOrDefaultAsync(u => u.UserId==id);
+        }
     }
 }
