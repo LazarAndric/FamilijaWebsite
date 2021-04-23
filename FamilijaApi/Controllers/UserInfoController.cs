@@ -1,3 +1,4 @@
+using System;
 using System.Threading.Tasks;
 using AutoMapper;
 using FailijaApi.Data;
@@ -25,12 +26,10 @@ namespace FamilijaAPi.Coontrollers
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<UserInfoReadDto>> GetUserInfo(int id)
+        public async Task<ActionResult<UserInfoReadDto>> GetUserInfo( int id)
         {
             var content=await _userInfoRepo.GetUserInfo(id);
             if(content==null)   return NoContent();
-            var refUser= await _userRepo.GetUserById(content.ReferralId);
-            if(refUser!=null) content.ReferralUser=refUser;
             var role=await _roleRepo.GetRole(content.RoleId);
             if(role!=null)  content.Role=role;
             return Ok(_mapper.Map<UserInfo, UserInfoReadDto>(content));
