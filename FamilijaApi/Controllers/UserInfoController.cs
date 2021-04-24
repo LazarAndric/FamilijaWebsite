@@ -26,7 +26,7 @@ namespace FamilijaAPi.Coontrollers
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<UserInfoReadDto>> GetUserInfo( int id)
+        public async Task<IActionResult> GetUserInfo( int id)
         {
             var content=await _userInfoRepo.GetUserInfo(id);
             if(content==null)   return NoContent();

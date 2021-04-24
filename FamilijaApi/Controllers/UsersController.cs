@@ -1,16 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
-using FamilijaApi.Data;
-using System.Threading.Tasks;
-using FamilijaApi.Models;
-using System.Linq;
-using System;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
-using System.Collections.Generic;
 using FailijaApi.Data;
-using FamilijaApi.DTOs;
 using AutoMapper;
-using AutoMapper.Configuration;
 
 namespace FamilijaApi.Controllers
 {
@@ -27,7 +17,7 @@ namespace FamilijaApi.Controllers
             _userRepo=userRepo;
         }
 
-        // public async Task<ActionResult<List<UserReadDto>>> GeAlltUsers()
+        // public async Task<IActionResult> GeAlltUsers()
         // {
             // var items=await _userRepo.GetAllItems();
             // if(items==null)     return NoContent();
@@ -36,7 +26,7 @@ namespace FamilijaApi.Controllers
         // }
 
         // [HttpGet("{id}")]
-        // public async Task<ActionResult<UserReadDto>> GetById(int id){
+        // public async Task<IActionResult> GetById(int id){
             // var response=await _userRepo.GetUserById(id);
                 // if(response==null)      return NoContent();
             // return Ok(_mapper.Map<UserReadDto>(response));
