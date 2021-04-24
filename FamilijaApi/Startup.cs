@@ -9,6 +9,7 @@ using Newtonsoft.Json.Serialization;
 using FailijaApi.Data;
 using AutoMapper;
 using System;
+using FamilijaApi.Configuration;
 
 namespace FamilijaApi
 {
@@ -24,7 +25,10 @@ namespace FamilijaApi
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.Configure<Jwtconfig>(Configuration.GetSection("Jwtconfig"));
+
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+            
             services.AddDbContext<FamilijaContext>(options => options.UseSqlServer (Configuration.GetConnectionString("FamilijaDB")));
             services.AddControllers().AddNewtonsoftJson(s => { 
                 s.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
