@@ -15,12 +15,12 @@ namespace FamilijaApi.Data
         }
         public async Task<IEnumerable<User>> GetAllItems()
         {
-            return await _context.User.ToArrayAsync();
+            return await _context.Users.ToArrayAsync();
         }
 
         public async Task<User> GetUserById(int id)
         {
-            return await _context.User.FirstOrDefaultAsync(item=> item.Id==id);
+            return await _context.Users.FirstOrDefaultAsync(item=> item.Id==id);
         }
     }
 }
