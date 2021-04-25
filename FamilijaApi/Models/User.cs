@@ -9,6 +9,8 @@ namespace FamilijaApi.Models
     {
         [Key]
         public int  Id { get; set; }
+        [Required]
+        [EmailAddress]
         public string EMail { get; set; }
         public string Password { get; set; }
         // public Contact Contact { get; set; }
