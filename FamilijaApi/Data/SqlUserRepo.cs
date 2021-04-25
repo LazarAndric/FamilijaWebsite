@@ -13,6 +13,12 @@ namespace FamilijaApi.Data
         public SqlUserRepo(FamilijaDbContext context){
             _context= context;
         }
+
+        public async void CreateUser(User user)
+        {
+           await _context.Users.AddAsync(user);
+        }
+
         public async Task<IEnumerable<User>> GetAllItems()
         {
             return await _context.Users.ToArrayAsync();
@@ -21,6 +27,11 @@ namespace FamilijaApi.Data
         public async Task<User> GetUserById(int id)
         {
             return await _context.Users.FirstOrDefaultAsync(item=> item.Id==id);
+        }
+
+        public async Task<bool> SaveChanges()
+        {
+           return (await _context.SaveChangesAsync() >= 0);
         }
     }
 }

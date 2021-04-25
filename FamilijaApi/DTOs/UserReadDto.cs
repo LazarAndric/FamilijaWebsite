@@ -8,11 +8,14 @@ namespace FamilijaApi.DTOs
     {
         [Key]
         public int Id { get; set; }
-        [Required]
-        [EmailAddress]
         public string EMail { get; set; }
-        [Required]
         public string Password { get; set; }
+        public int ReferralId { get; set; }
+
+        public User ReferralUser { get; set; }
+        public string ContractNumber { get; set; }
+        public int RoleId { get; set; }
+        public Role Role { get; set; }
         public Contact Contact { get; set; }
         [Required]
         public PersonalInfo Info { get; set; }

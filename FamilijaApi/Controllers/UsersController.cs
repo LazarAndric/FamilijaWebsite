@@ -4,6 +4,7 @@ using AutoMapper;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using FamilijaApi.DTOs;
+using FamilijaApi.Models;
 
 namespace FamilijaApi.Controllers
 {
@@ -24,7 +25,21 @@ namespace FamilijaApi.Controllers
         {
             var items=await _userRepo.GetAllItems();
             if(items==null)     return NoContent();
-            return Ok(_mapper.Map<List<UserReadDto>>(items));
+            var userlist = new List<User>();
+
+            foreach (var item in items)
+            {
+                userlist.Add(await _userRepo.GetUserById(item.ReferralId));
+            }
+
+            var mapedItems = _mapper.Map<List<UserReadDto>>(items);
+
+            for (int i = 0; i < mapedItems.Count; i++)
+            {
+                mapedItems[i].ReferralUser = userlist[i];
+            }
+            
+            return Ok(mapedItems);
 
         }
 
@@ -33,6 +48,19 @@ namespace FamilijaApi.Controllers
             var response=await _userRepo.GetUserById(id);
                 if(response==null)      return NoContent();
             return Ok(_mapper.Map<UserReadDto>(response));
+        }
+
+        [HttpPost]
+
+        public async Task<IActionResult> CreateUser([FromBody] UserCreateDto userCreateDto)
+        {
+            var user = _mapper.Map<User>(userCreateDto);
+            _userRepo.CreateUser(user);
+            await _userRepo.SaveChanges();
+
+            return Created("", user);
+
+
         }
     }
 }

@@ -8,5 +8,7 @@ namespace FailijaApi.Data
     {
         Task<IEnumerable<User>> GetAllItems();
         Task<User> GetUserById(int id);
+        void CreateUser(User user);
+        Task<bool> SaveChanges();
     }
 }

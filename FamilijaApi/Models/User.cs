@@ -1,5 +1,6 @@
 using System;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace FamilijaApi.Models
 {
@@ -13,6 +14,8 @@ namespace FamilijaApi.Models
         // public UserInfo UserInfo { get; set; }
         // public PersonalInfo Info { get; set; }
         // public Address Address { get; set; }
+        [ForeignKey("User")]
+        
         public int ReferralId { get; set; }
         //public User ReferralUser { get; set; }
         public string ContractNumber { get; set; }
