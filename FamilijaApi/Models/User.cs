@@ -1,6 +1,7 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.EntityFrameworkCore;
 
 namespace FamilijaApi.Models
 {
@@ -14,12 +15,12 @@ namespace FamilijaApi.Models
         // public UserInfo UserInfo { get; set; }
         // public PersonalInfo Info { get; set; }
         // public Address Address { get; set; }
-        [ForeignKey("User")]
-        
+        [ForeignKey("ReferralUser")]
         public int ReferralId { get; set; }
-        //public User ReferralUser { get; set; }
+        public User ReferralUser { get; set; }
         public string ContractNumber { get; set; }
+        [ForeignKey("Role")]
         public int RoleId { get; set; }
-        //public Role Role { get; set; }
+        public Role Role { get; set; }
     }
 }

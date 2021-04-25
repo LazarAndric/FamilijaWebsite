@@ -26,20 +26,8 @@ namespace FamilijaApi.Controllers
             var items=await _userRepo.GetAllItems();
             if(items==null)     return NoContent();
             var userlist = new List<User>();
-
-            foreach (var item in items)
-            {
-                userlist.Add(await _userRepo.GetUserById(item.ReferralId));
-            }
-
-            var mapedItems = _mapper.Map<List<UserReadDto>>(items);
-
-            for (int i = 0; i < mapedItems.Count; i++)
-            {
-                mapedItems[i].ReferralUser = userlist[i];
-            }
-            
-            return Ok(mapedItems);
+           
+            return Ok(_mapper.Map<List<UserReadDto>>(items));
 
         }
 
