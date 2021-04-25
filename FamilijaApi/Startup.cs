@@ -7,9 +7,12 @@ using FamilijaApi.Data;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json.Serialization;
 using FailijaApi.Data;
-using AutoMapper;
 using System;
 using FamilijaApi.Configuration;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using System.Text;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.AspNetCore.Identity;
 
 namespace FamilijaApi
 {
@@ -28,12 +31,37 @@ namespace FamilijaApi
             services.Configure<Jwtconfig>(Configuration.GetSection("Jwtconfig"));
 
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
-            
-            services.AddDbContext<FamilijaContext>(options => options.UseSqlServer (Configuration.GetConnectionString("FamilijaDB")));
+
+            services.AddDbContext<FamilijaDbContext>(options => 
+                options.UseSqlServer(
+                    Configuration.GetConnectionString("FamilijaDB")
+                    ));
+
+            services.AddAuthentication(options=>{
+               options.DefaultAuthenticateScheme=JwtBearerDefaults.AuthenticationScheme;
+               options.DefaultScheme= JwtBearerDefaults.AuthenticationScheme;
+               options.DefaultChallengeScheme= JwtBearerDefaults.AuthenticationScheme;
+            })
+            .AddJwtBearer(jwt=>{
+                var key= Encoding.ASCII.GetBytes(Configuration["JwtConfig:Secret"]);
+
+                jwt.SaveToken=true;
+                jwt.TokenValidationParameters= new TokenValidationParameters{
+                    ValidateIssuerSigningKey= true,
+                    IssuerSigningKey= new SymmetricSecurityKey(key),
+                    ValidateIssuer= false,
+                    ValidateAudience=false,
+                    ValidateLifetime=true,
+                    RequireExpirationTime=false
+                };
+            });
+            services.AddDefaultIdentity<IdentityUser>(options=> options.SignIn.RequireConfirmedAccount=true)
+                    .AddEntityFrameworkStores<FamilijaDbContext>();
+
             services.AddControllers().AddNewtonsoftJson(s => { 
                 s.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
                 });
-                
+
             services.AddScoped<IUserRepo, SqlUserRepo>();
             services.AddScoped<IUserInfoRepo, SqlUserInfoRepo>();
             services.AddScoped<IRoleRepo, SqlRoleRepo>();
@@ -52,7 +80,7 @@ namespace FamilijaApi
             app.UseHttpsRedirection();
 
             app.UseRouting();
-
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>

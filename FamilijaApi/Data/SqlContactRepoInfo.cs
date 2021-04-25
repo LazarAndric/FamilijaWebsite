@@ -9,8 +9,8 @@ namespace FamilijaApi.Data
 {
     public class SqlContactRepo : IContactInfoRepo
     {
-        private FamilijaContext _context;
-        public SqlContactRepo(FamilijaContext context){
+        private FamilijaDbContext _context;
+        public SqlContactRepo(FamilijaDbContext context){
             _context= context;
         }
     }

@@ -9,8 +9,8 @@ namespace FamilijaApi.Data
 {
     public class SqlPersonalInfoRepo : IPersonalInfoRepo
     {
-        private FamilijaContext _context;
-        public SqlPersonalInfoRepo(FamilijaContext context){
+        private FamilijaDbContext _context;
+        public SqlPersonalInfoRepo(FamilijaDbContext context){
             _context= context;
         }
     }

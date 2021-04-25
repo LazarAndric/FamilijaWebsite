@@ -9,18 +9,18 @@ namespace FamilijaApi.Data
 {
     public class SqlUserRepo : IUserRepo
     {
-        private FamilijaContext _context;
-        public SqlUserRepo(FamilijaContext context){
+        private FamilijaDbContext _context;
+        public SqlUserRepo(FamilijaDbContext context){
             _context= context;
         }
         public async Task<IEnumerable<User>> GetAllItems()
         {
-            return await _context.Users.ToArrayAsync();
+            return await _context.User.ToArrayAsync();
         }
 
         public async Task<User> GetUserById(int id)
         {
-            return await _context.Users.FirstOrDefaultAsync(item=> item.UserId==id);
+            return await _context.User.FirstOrDefaultAsync(item=> item.UserId==id);
         }
     }
 }

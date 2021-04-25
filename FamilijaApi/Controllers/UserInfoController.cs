@@ -6,7 +6,7 @@ using FamilijaApi.DTOs;
 using FamilijaApi.Models;
 using Microsoft.AspNetCore.Mvc;
 
-namespace FamilijaAPi.Coontrollers
+namespace FamilijaApi.Coontrollers
 {
     [ApiController]
     [Route("[Controller]")]
