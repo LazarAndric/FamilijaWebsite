@@ -26,11 +26,6 @@ namespace FamilijaApi.Profiles
             CreateMap<PersonalInfoCreateDto, PersonalInfo>();
             CreateMap<PersonalInfoUpdateDtos, PersonalInfo>();
             CreateMap<PersonalInfo, PersonalInfoUpdateDtos>();
-
-            CreateMap<UserInfo, UserInfoReadDto>();
-            CreateMap<UserInfoCreateDto, UserInfo>();
-            CreateMap<UserUpdateDto, UserInfo>();
-            CreateMap<UserInfo, UserUpdateDto>();
         }
     }
 }
