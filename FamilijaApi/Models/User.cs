@@ -6,7 +6,7 @@ namespace FamilijaApi.Models
     public class User
     {
         [Key]
-        public int  UserId { get; set; }
+        public int  Id { get; set; }
         public string EMail { get; set; }
         public string Password { get; set; }
         public string Nationality { get; set; }

@@ -20,7 +20,7 @@ namespace FamilijaApi.Data
 
         public async Task<User> GetUserById(int id)
         {
-            return await _context.User.FirstOrDefaultAsync(item=> item.UserId==id);
+            return await _context.User.FirstOrDefaultAsync(item=> item.Id==id);
         }
     }
 }
