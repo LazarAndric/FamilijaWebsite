@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Linq;
+using System;
 
 namespace FamilijaApi.Data
 {
@@ -17,6 +18,15 @@ namespace FamilijaApi.Data
         public async void CreateUser(User user)
         {
            await _context.Users.AddAsync(user);
+        }
+
+        public void DeleteUser(User deleteModelUser)
+        {
+            if (deleteModelUser == null)
+            {
+                throw new ArgumentNullException(nameof(deleteModelUser));
+            }
+            _context.Users.Remove(deleteModelUser);
         }
 
         public async Task<IEnumerable<User>> GetAllItems()
@@ -33,5 +43,11 @@ namespace FamilijaApi.Data
         {
            return (await _context.SaveChangesAsync() >= 0);
         }
+
+        public void UpdateUser(User updateModelUser)
+        {
+
+        }
+
     }
 }

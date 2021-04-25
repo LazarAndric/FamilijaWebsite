@@ -1,6 +1,7 @@
 using FamilijaApi.DTOs;
 using FamilijaApi.Models;
 using AutoMapper;
+using System.Threading.Tasks;
 
 namespace FamilijaApi.Profiles
 {

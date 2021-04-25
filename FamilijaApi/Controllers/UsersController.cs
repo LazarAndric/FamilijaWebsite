@@ -50,5 +50,37 @@ namespace FamilijaApi.Controllers
 
 
         }
+
+        [HttpPut ("{id}")]
+
+        public async Task<IActionResult> UpdateUser(int id, UserUpdateDto userUpdateDto)
+        {
+            var updateModelUser = _userRepo.GetUserById(id).Result;
+            if (updateModelUser == null)
+            {
+                return NotFound();
+            }
+
+            _mapper.Map(userUpdateDto, updateModelUser);
+            _userRepo.UpdateUser(updateModelUser);
+            await _userRepo.SaveChanges();
+            return Ok();
+        }
+
+        [HttpDelete("{id}")]
+        public ActionResult DeleteUser(int id)
+        {
+            var deleteModelUser = _userRepo.GetUserById(id).Result;
+            if (deleteModelUser == null)
+            {
+                return NotFound();
+            }
+
+            _userRepo.DeleteUser(deleteModelUser);
+            _userRepo.SaveChanges();
+            return NoContent();
+        }
+
+
     }
 }
