@@ -9,7 +9,7 @@ namespace FamilijaApi.Data
         public DbSet<User> Users {get; set;}
         public DbSet<Role> Roles {get; set;}
         public DbSet<PersonalInfo> PersonalInfo { get; set; }
-        public DbSet<Contact> Contact { get; set; }
+        public DbSet<Contact> Contacts { get; set; }
         public DbSet<Address> Addresses { get; set; }
 
         public FamilijaDbContext(DbContextOptions<FamilijaDbContext> options) : base (options)

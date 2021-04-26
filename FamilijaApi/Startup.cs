@@ -67,6 +67,7 @@ namespace FamilijaApi
             services.AddScoped<IUserRepoTemp, SqlUserRepoTemp>();
 
             services.AddScoped<IAdddressesRepo, SqlAddressRepo>();
+            services.AddScoped<IContactRepo, SqlContactRepo>();
 
         }
 
