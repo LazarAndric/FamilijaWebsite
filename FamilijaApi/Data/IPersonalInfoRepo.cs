@@ -6,5 +6,8 @@ namespace FailijaApi.Data
 {
     public interface IPersonalInfoRepo
     {
+        Task<PersonalInfo> GetPersonalInfo(int id);
+        void CreatePersonalInfo(PersonalInfo personalInfo);
+        Task<bool> SaveChanges();
     }
 }
