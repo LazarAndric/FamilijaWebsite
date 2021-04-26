@@ -11,6 +11,7 @@ namespace FamilijaApi.Data
         public DbSet<PersonalInfo> PersonalInfo { get; set; }
         public DbSet<Contact> Contacts { get; set; }
         public DbSet<Address> Addresses { get; set; }
+        public DbSet<Finance> Finance { get; set; }
 
         public FamilijaDbContext(DbContextOptions<FamilijaDbContext> options) : base (options)
         {
