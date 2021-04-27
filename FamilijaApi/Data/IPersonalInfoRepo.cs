@@ -9,5 +9,7 @@ namespace FailijaApi.Data
         Task<PersonalInfo> GetPersonalInfo(int id);
         void CreatePersonalInfo(PersonalInfo personalInfo);
         Task<bool> SaveChanges();
+        void UpdatePersonalInfo(PersonalInfo updateModelPersonalInfo);
+        void DeletePersonalInfo(PersonalInfo deleteModelPersonalInfo);
     }
 }

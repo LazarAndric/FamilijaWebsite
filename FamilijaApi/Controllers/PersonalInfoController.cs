@@ -40,5 +40,35 @@ namespace FamilijaApi.Controllers
 
             return Created("", personalInfo);
         }
+
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdatePersonalInfo(int id, PersonalInfoUpdateDtos personalInfoUpdateDtos)
+        {
+            var updateModelPersonalInfo = _personalInfoRepo.GetPersonalInfo(id).Result;
+            if (updateModelPersonalInfo == null)
+            {
+                return NotFound();
+            }
+
+            _mapper.Map(personalInfoUpdateDtos, updateModelPersonalInfo);
+            _personalInfoRepo.UpdatePersonalInfo(updateModelPersonalInfo);
+            await _personalInfoRepo.SaveChanges();
+            return Ok();
+
+        }
+
+        [HttpDelete("{id}")]
+        public ActionResult DeletePersonalInfo(int id)
+        {
+            var deleteModelPersonalInfo = _personalInfoRepo.GetPersonalInfo(id).Result;
+            if (deleteModelPersonalInfo == null)
+            {
+                return NotFound();
+            }
+
+            _personalInfoRepo.DeletePersonalInfo(deleteModelPersonalInfo);
+            _personalInfoRepo.SaveChanges();
+            return NoContent();
+        }
     }
 }

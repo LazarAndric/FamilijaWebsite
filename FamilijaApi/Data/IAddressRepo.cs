@@ -10,6 +10,6 @@ namespace FailijaApi.Data
         void CreateAddress(Address addres);
         Task<bool> SaveChanges();
         void UpdateAddress(Address updateModelAddress);
-        void DeleteUser(Address deleteModelAddress);
+        void DeleteAdress(Address deleteModelAddress);
     }
 }

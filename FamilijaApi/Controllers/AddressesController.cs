@@ -63,7 +63,7 @@ namespace FamilijaApi.Controllers
                 return NotFound();
             }
 
-            _addressRepo.DeleteUser(deleteModelAddress);
+            _addressRepo.DeleteAdress(deleteModelAddress);
             _addressRepo.SaveChanges();
             return NoContent();
         }

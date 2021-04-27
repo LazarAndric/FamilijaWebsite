@@ -20,7 +20,7 @@ namespace FamilijaApi.Data
             await _context.Addresses.AddAsync(addres);
         }
 
-        public void DeleteUser(Address deleteModelAddress)
+        public void DeleteAdress(Address deleteModelAddress)
         {
             if (deleteModelAddress == null)
             {
