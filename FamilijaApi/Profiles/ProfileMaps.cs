@@ -33,7 +33,10 @@ namespace FamilijaApi.Profiles
             CreateMap<FinanceUpdateDto, Finance>();
             CreateMap<Finance, FinanceUpdateDto>();
 
-
+            CreateMap<Role, RoleReadDto>();
+            CreateMap<RoleCreateDto, Role>();
+            CreateMap<RoleUpdateDto, Role>();
+            CreateMap<Role, RoleUpdateDto>();
 
 
         }
