@@ -1,6 +1,6 @@
 namespace FamilijaApi.DTOs
 {
-    public class ToleUpdateDto
+    public class RoleUpdateDto
     {
         public string Value { get; set; }
     }

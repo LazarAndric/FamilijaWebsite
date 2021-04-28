@@ -72,6 +72,11 @@ namespace FamilijaApi
             services.AddScoped<IAuthRepo, SqlAuthRepo>();
             
 
+            services.AddScoped<IAdddressesRepo, SqlAddressRepo>();
+            services.AddScoped<IContactRepo, SqlContactRepo>();
+            services.AddScoped<IFinanceRepo, SqlFinanceRepo>();
+            services.AddScoped<IPersonalInfoRepo, SqlPersonalInfoRepo>();
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

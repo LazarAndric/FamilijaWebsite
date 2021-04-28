@@ -27,6 +27,18 @@ namespace FamilijaApi.Profiles
             CreateMap<PersonalInfoCreateDto, PersonalInfo>();
             CreateMap<PersonalInfoUpdateDtos, PersonalInfo>();
             CreateMap<PersonalInfo, PersonalInfoUpdateDtos>();
+
+            CreateMap<Finance, FinanceReadDto>();
+            CreateMap<FinanceCreateDto, Finance>();
+            CreateMap<FinanceUpdateDto, Finance>();
+            CreateMap<Finance, FinanceUpdateDto>();
+
+            CreateMap<Role, RoleReadDto>();
+            CreateMap<RoleCreateDto, Role>();
+            CreateMap<RoleUpdateDto, Role>();
+            CreateMap<Role, RoleUpdateDto>();
+
+
         }
     }
 }
