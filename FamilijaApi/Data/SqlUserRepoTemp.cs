@@ -20,7 +20,6 @@ namespace FamilijaApi.Data
         {
             var isTrue =string.Equals(existingUser.Password, password);
             return isTrue;
-
         }
 
         public Task<User> FindByEmailAsync(string email)
@@ -30,6 +29,11 @@ namespace FamilijaApi.Data
         public async Task CreateUser(User user)
         {
            await _context.Users.AddAsync(user);
+        }
+
+        public Task<User> FindByIdAsync(int id)
+        {
+            return _context.Users.FirstOrDefaultAsync(x => x.Id==id);
         }
     }
 }

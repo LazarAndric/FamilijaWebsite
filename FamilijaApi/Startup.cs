@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using System.Text;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.AspNetCore.Identity;
+using FamilijaApi.Models;
 
 namespace FamilijaApi
 {
@@ -35,26 +36,29 @@ namespace FamilijaApi
             services.AddDbContext<FamilijaDbContext>(options => 
                 options.UseSqlServer(
                     Configuration.GetConnectionString("FamilijaDB")
-                    ));
-
+                    )
+            );
+            var key= Encoding.ASCII.GetBytes(Configuration["JwtConfig:Secret"]);
+            var tokenvalidationParans= new TokenValidationParameters{
+                ValidateIssuerSigningKey= true,
+                IssuerSigningKey= new SymmetricSecurityKey(key),
+                ValidateIssuer= false,
+                ValidateAudience=false,
+                ValidateLifetime=true,
+                RequireExpirationTime=false
+            };
             services.AddAuthentication(options=>{
                options.DefaultAuthenticateScheme=JwtBearerDefaults.AuthenticationScheme;
                options.DefaultScheme= JwtBearerDefaults.AuthenticationScheme;
                options.DefaultChallengeScheme= JwtBearerDefaults.AuthenticationScheme;
             })
             .AddJwtBearer(jwt=>{
-                var key= Encoding.ASCII.GetBytes(Configuration["JwtConfig:Secret"]);
-
                 jwt.SaveToken=true;
-                jwt.TokenValidationParameters= new TokenValidationParameters{
-                    ValidateIssuerSigningKey= true,
-                    IssuerSigningKey= new SymmetricSecurityKey(key),
-                    ValidateIssuer= false,
-                    ValidateAudience=false,
-                    ValidateLifetime=true,
-                    RequireExpirationTime=false
-                };
+                jwt.TokenValidationParameters= tokenvalidationParans;
             });
+
+            services.AddSingleton(tokenvalidationParans);
+            
             services.AddDefaultIdentity<IdentityUser>(options=> options.SignIn.RequireConfirmedAccount=true)
                     .AddEntityFrameworkStores<FamilijaDbContext>();
 
@@ -65,6 +69,7 @@ namespace FamilijaApi
             services.AddScoped<IUserRepo, SqlUserRepo>();
             services.AddScoped<IRoleRepo, SqlRoleRepo>();
             services.AddScoped<IUserRepoTemp, SqlUserRepoTemp>();
+            services.AddScoped<IAuthRepo, SqlAuthRepo>();
             
 
         }

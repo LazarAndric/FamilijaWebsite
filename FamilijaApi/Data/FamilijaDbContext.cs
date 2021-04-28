@@ -11,11 +11,10 @@ namespace FamilijaApi.Data
         public DbSet<PersonalInfo> PersonalInfo { get; set; }
         public DbSet<Contact> Contact { get; set; }
         public DbSet<Address> Address { get; set; }
+        public DbSet<RefreshToken> RefreshTokens { get; set; }
 
         public FamilijaDbContext(DbContextOptions<FamilijaDbContext> options) : base (options)
         {
         }
-
-        
     }
 }

@@ -5,6 +5,7 @@ namespace FamilijaApi.Data
 {
     public interface IUserRepoTemp
     {
+        Task<User> FindByIdAsync(int id);
         Task<User> FindByEmailAsync(string email);
         bool CheckPassword(User existingUser, string password);
         Task CreateUser(User user);
