@@ -5,6 +5,7 @@ import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 import AppBar from '@material-ui/core/AppBar';
 import { makeStyles } from '@material-ui/core/styles';
+import Link from '@material-ui/core/Link';
 import Sidebar from "../Sidebar/Sidebar";
 
 const useStyles = makeStyles((theme) => ({
@@ -36,7 +37,7 @@ const useStyles = makeStyles((theme) => ({
   link: {
     margin: theme.spacing(1, 1.5),
     color: '#fff',
-
+    fontSize: '16px',
   },
 }));
 
@@ -50,19 +51,19 @@ const Nav = () => {
           </Typography>
           <Toolbar className={classes.toolbar}>
             <LinkRouter to='/' className={classes.link}>
-              <Typography variant="h6" color="TextPrimary" className={classes.link} > 
-                  Home
-              </Typography>
+            <Link variant="button" color="textPrimary" href="#" className={classes.link}>
+              Home
+            </Link>
             </LinkRouter>
             <LinkRouter to='/iptv'>
-              <Typography variant="h6" color="TextPrimary"  className={classes.link} > 
-                  IPTV
-              </Typography>
+            <Link variant="button" color="textPrimary" href="#" className={classes.link}>
+              IPTV
+            </Link>
             </LinkRouter>
             <LinkRouter to='/about'>
-              <Typography variant="h6" color="TextPrimary" className={classes.link} > 
-                  About
-              </Typography>
+              <Link variant="button" color="textPrimary" href="#" className={classes.link}>
+              About
+            </Link>
             </LinkRouter>
           </Toolbar>
           <Button href="#" color="primary" variant="outlined" className={classes.link}>
