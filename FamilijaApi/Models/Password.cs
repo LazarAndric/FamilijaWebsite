@@ -14,6 +14,5 @@ namespace FamilijaApi.Models
         public int UserId { get; set; }
         public string Hash { get; set; }
         public string Salt { get; set; }
-
     }
 }

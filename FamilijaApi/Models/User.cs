@@ -9,7 +9,7 @@ namespace FamilijaApi.Models
     {
         [Key]
         public int  Id { get; set; }
-        [Required]
+        public string Username { get; set; }
         [EmailAddress]
         public string EMail { get; set; }
         //public string Password { get; set; }
@@ -19,10 +19,8 @@ namespace FamilijaApi.Models
         // public Address Address { get; set; }
         [ForeignKey("ReferralUser")]
         public int ReferralId { get; set; }
-        public User ReferralUser { get; set; }
         public string ContractNumber { get; set; }
-        [ForeignKey("Role")]
-        public int RoleId { get; set; }
-        public Role Role { get; set; }
+        //public bool IsConfirmed { get; set; }
+        public User ReferralUser { get; set; }
     }
 }

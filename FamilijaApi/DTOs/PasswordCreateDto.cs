@@ -11,7 +11,6 @@ namespace FamilijaApi.DTOs
         [Key]
         public int Id { get; set; }
         public int UserId { get; set; }
-        public string Hash { get; set; }
-        public string Salt { get; set; }
+        public string Password { get; set; }
     }
 }

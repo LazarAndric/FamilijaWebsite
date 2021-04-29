@@ -31,45 +31,45 @@ namespace FamilijaApi.Controllers
             return Ok(_mapper.Map<RoleReadDto>(content));
         }
 
-        [HttpPost]
-        public async Task<IActionResult> CreateRole([FromBody] RoleCreateDto roleCreateDto)
-        {
-            var role = _mapper.Map<Role>(roleCreateDto);
-            _roleRepo.CreateRole(role);
-            await _roleRepo.SaveChanges();
+        // [HttpPost]
+        // public async Task<IActionResult> CreateRole([FromBody] RoleCreateDto roleCreateDto)
+        // {
+        //     var role = _mapper.Map<Role>(roleCreateDto);
+        //     _roleRepo.CreateRole(role);
+        //     await _roleRepo.SaveChanges();
 
-            return Created("", role);
-        }
+        //     return Created("", role);
+        // }
 
-        [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateRole(int id, RoleUpdateDto roleUpdateDto)
-        {
-            var updateModelRole = _roleRepo.GetRole(id).Result;
-            if (updateModelRole == null)
-            {
-                return NotFound();
-            }
+        // [HttpPut("{id}")]
+        // public async Task<IActionResult> UpdateRole(int id, RoleUpdateDto roleUpdateDto)
+        // {
+        //     var updateModelRole = _roleRepo.GetRole(id).Result;
+        //     if (updateModelRole == null)
+        //     {
+        //         return NotFound();
+        //     }
 
-            _mapper.Map(roleUpdateDto, updateModelRole);
-            _roleRepo.UpdateRole(updateModelRole);
-            await _roleRepo.SaveChanges();
-            return Ok();
+        //     _mapper.Map(roleUpdateDto, updateModelRole);
+        //     _roleRepo.UpdateRole(updateModelRole);
+        //     await _roleRepo.SaveChanges();
+        //     return Ok();
 
-        }
+        // }
 
 
-        [HttpDelete("{id}")]
-        public ActionResult DeleteRole(int id)
-        {
-            var deleteModelRole = _roleRepo.GetRole(id).Result;
-            if (deleteModelRole == null)
-            {
-                return NotFound();
-            }
+        // [HttpDelete("{id}")]
+        // public ActionResult DeleteRole(int id)
+        // {
+        //     var deleteModelRole = _roleRepo.GetRole(id).Result;
+        //     if (deleteModelRole == null)
+        //     {
+        //         return NotFound();
+        //     }
 
-            _roleRepo.DeleteRole(deleteModelRole);
-            _roleRepo.SaveChanges();
-            return NoContent();
-        }
+        //     _roleRepo.DeleteRole(deleteModelRole);
+        //     _roleRepo.SaveChanges();
+        //     return NoContent();
+        // }
     }
 }

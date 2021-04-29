@@ -14,10 +14,9 @@ namespace FamilijaApi.Data
         public SqlRoleRepo(FamilijaDbContext context){
             _context = context;
         }
-
-        public async void CreateRole(Role role)
+        public async Task CreateRole(UserRole role)
         {
-            await _context.Roles.AddAsync(role);
+            await _context.UserRoles.AddAsync(role);
         }
 
         public void DeleteRole(Role deleteModelRole)
@@ -28,8 +27,11 @@ namespace FamilijaApi.Data
             }
             _context.Roles.Remove(deleteModelRole);
         }
-
-        public async Task<Role> GetRole(int id)
+        public async Task<UserRole> GetRole(int id)
+        {
+            return await _context.UserRoles.FirstOrDefaultAsync(item => item.UserId == id);
+        }
+        public async Task<Role> GetRoleByRoleId(int id)
         {
             return await _context.Roles.FirstOrDefaultAsync(item => item.Id == id);
         }

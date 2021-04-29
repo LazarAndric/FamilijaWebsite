@@ -36,29 +36,26 @@ namespace FamilijaApi.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(int id)
         {
-            var response = await _userRepo.GetUserById(id);
+            var response = await _userRepo.GetUserByIdAsync(id);
             if (response == null) return NoContent();
             return Ok(_mapper.Map<UserReadDto>(response));
         }
 
         [HttpPost]
 
-        public async Task<IActionResult> CreateUser([FromBody] UserCreateDto userCreateDto)
+        public async Task<IActionResult> CreateUserAsync([FromBody] UserCreateDto userCreateDto)
         {
             var user = _mapper.Map<User>(userCreateDto);
-            _userRepo.CreateUser(user);
+            await _userRepo.CreateUserAsync(user);
             await _userRepo.SaveChanges();
 
             return Created("", user);
-
-
         }
 
         [HttpPut ("{id}")]
-
-        public async Task<IActionResult> UpdateUser(int id, UserUpdateDto userUpdateDto)
+        public async Task<IActionResult> UpdateUserAsync(int id, UserUpdateDto userUpdateDto)
         {
-            var updateModelUser = _userRepo.GetUserById(id).Result;
+            var updateModelUser = _userRepo.GetUserByIdAsync(id).Result;
             if (updateModelUser == null)
             {
                 return NotFound();
@@ -71,18 +68,16 @@ namespace FamilijaApi.Controllers
         }
 
         [HttpDelete("{id}")]
-        public ActionResult DeleteUser(int id)
+        public async Task<IActionResult> DeleteUserAsync(int id)
         {
-            var deleteModelUser = _userRepo.GetUserById(id).Result;
+            var deleteModelUser = await _userRepo.GetUserByIdAsync(id);
             if (deleteModelUser == null)
             {
                 return NotFound();
             }
-
             _userRepo.DeleteUser(deleteModelUser);
-            _userRepo.SaveChanges();
+            await _userRepo.SaveChanges();
             return NoContent();
         }
-
     }
 }

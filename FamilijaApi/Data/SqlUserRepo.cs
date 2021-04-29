@@ -5,6 +5,8 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Linq;
 using System;
+using System.Net.Mail;
+using System.Security.Cryptography;
 
 namespace FamilijaApi.Data
 {
@@ -15,17 +17,27 @@ namespace FamilijaApi.Data
             _context= context;
         }
 
-        public async void CreateUser(User user)
+        public Task<User> FindByEmailAsync(string email)
         {
-           await _context.Users.AddAsync(user);
+            return _context.Users.FirstOrDefaultAsync(x=>MailAddress.Equals(x.EMail, email));
+        }
+        
+        public async Task<bool> CreateUserAsync(User user)
+        {
+            try
+            {
+                await _context.Users.AddAsync(user);
+                return true;
+            }
+            catch (System.Exception)
+            {
+                return false;
+            }
+            
         }
 
         public void DeleteUser(User deleteModelUser)
         {
-            if (deleteModelUser == null)
-            {
-                throw new ArgumentNullException(nameof(deleteModelUser));
-            }
             _context.Users.Remove(deleteModelUser);
         }
 
@@ -34,15 +46,12 @@ namespace FamilijaApi.Data
             return await _context.Users.ToArrayAsync();
         }
 
-        public async Task<User> GetPassword(int id)
-        {
-            return await _context.Users.FirstOrDefaultAsync(item => item.Id == id);
-        }
 
-        public async Task<User> GetUserById(int id)
+        public async Task<User> GetUserByIdAsync(int id)
         {
             return await _context.Users.FirstOrDefaultAsync(item=> item.Id==id);
         }
+
 
         public async Task<bool> SaveChanges()
         {
@@ -54,5 +63,9 @@ namespace FamilijaApi.Data
 
         }
 
+        public async Task<User> GetUserByUsernameAsync(string username)
+        {
+            return await _context.Users.FirstOrDefaultAsync(item=> item.Username.Equals(username));
+        }
     }
 }
