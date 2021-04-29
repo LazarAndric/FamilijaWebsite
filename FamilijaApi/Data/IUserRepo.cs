@@ -12,5 +12,6 @@ namespace FailijaApi.Data
         Task<bool> SaveChanges();
         void UpdateUser(User updateModelUser);
         void DeleteUser(User deleteModelUser);
+        Task<User> GetPassword(int id);
     }
 }

@@ -16,11 +16,11 @@ namespace FamilijaApi.Data
             _context= context;
         }
 
-        public bool CheckPassword(User existingUser, string password)
-        {
-            var isTrue =string.Equals(existingUser.Password, password);
-            return isTrue;
-        }
+        //public bool CheckPassword(User existingUser, string password)
+        //{
+        //    var isTrue = string.Equals(existingUser.Password, password);
+        //    return isTrue;
+        //}
 
         public Task<User> FindByEmailAsync(string email)
         {
@@ -34,6 +34,12 @@ namespace FamilijaApi.Data
         public Task<User> FindByIdAsync(int id)
         {
             return _context.Users.FirstOrDefaultAsync(x => x.Id==id);
+        }
+
+        //samo da ne izbacuje eror
+        public bool CheckPassword(User existingUser, string password)
+        {
+            throw new System.NotImplementedException();
         }
     }
 }

@@ -5,6 +5,8 @@ using System.Threading.Tasks;
 using System.Collections.Generic;
 using FamilijaApi.DTOs;
 using FamilijaApi.Models;
+using System;
+using System.Security.Cryptography;
 
 namespace FamilijaApi.Controllers
 {
@@ -32,9 +34,10 @@ namespace FamilijaApi.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetById(int id){
-            var response=await _userRepo.GetUserById(id);
-                if(response==null)      return NoContent();
+        public async Task<IActionResult> GetById(int id)
+        {
+            var response = await _userRepo.GetUserById(id);
+            if (response == null) return NoContent();
             return Ok(_mapper.Map<UserReadDto>(response));
         }
 
@@ -80,7 +83,6 @@ namespace FamilijaApi.Controllers
             _userRepo.SaveChanges();
             return NoContent();
         }
-
 
     }
 }

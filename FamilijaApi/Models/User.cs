@@ -12,7 +12,7 @@ namespace FamilijaApi.Models
         [Required]
         [EmailAddress]
         public string EMail { get; set; }
-        public string Password { get; set; }
+        //public string Password { get; set; }
         // public Contact Contact { get; set; }
         // public UserInfo UserInfo { get; set; }
         // public PersonalInfo Info { get; set; }

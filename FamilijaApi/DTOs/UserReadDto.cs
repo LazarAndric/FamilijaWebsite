@@ -9,7 +9,7 @@ namespace FamilijaApi.DTOs
         [Key]
         public int Id { get; set; }
         public string EMail { get; set; }
-        public string Password { get; set; }
+        //public string Password { get; set; }
         public int ReferralId { get; set; }
 
         public User ReferralUser { get; set; }

@@ -34,6 +34,11 @@ namespace FamilijaApi.Data
             return await _context.Users.ToArrayAsync();
         }
 
+        public async Task<User> GetPassword(int id)
+        {
+            return await _context.Users.FirstOrDefaultAsync(item => item.Id == id);
+        }
+
         public async Task<User> GetUserById(int id)
         {
             return await _context.Users.FirstOrDefaultAsync(item=> item.Id==id);

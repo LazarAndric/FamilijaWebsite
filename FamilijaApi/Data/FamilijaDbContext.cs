@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using FamilijaApi.Models;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using System;
 
 namespace FamilijaApi.Data
 {
@@ -13,6 +14,7 @@ namespace FamilijaApi.Data
         public DbSet<Contact> Contacts { get; set; }
         public DbSet<Address> Addresses { get; set; }
         public DbSet<Finance> Finance { get; set; }
+        public DbSet<Password> Passwords { get; set; }
 
         public FamilijaDbContext(DbContextOptions<FamilijaDbContext> options) : base (options)
         {

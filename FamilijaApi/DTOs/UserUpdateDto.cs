@@ -9,7 +9,7 @@ namespace FamilijaApi.DTOs
         [EmailAddress]
         public string EMail { get; set; }
         [Required]
-        public string Password { get; set; }
+        //public string Password { get; set; }
 
         public int ReferralId { get; set; }
         public string ContractNumber { get; set; }

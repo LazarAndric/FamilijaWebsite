@@ -12,6 +12,9 @@ namespace FamilijaApi.Profiles
             CreateMap<UserCreateDto, User>();
             CreateMap<UserUpdateDto, User>();
             CreateMap<User, UserUpdateDto>();
+            CreateMap<User, PasswordReadDto>();
+
+
 
             CreateMap<Address, AddressReadDto>();
             CreateMap<AddressCreateDto, Address>();
@@ -37,6 +40,13 @@ namespace FamilijaApi.Profiles
             CreateMap<RoleCreateDto, Role>();
             CreateMap<RoleUpdateDto, Role>();
             CreateMap<Role, RoleUpdateDto>();
+
+            CreateMap<Password, PasswordReadDto>();
+            CreateMap<PasswordCreateDto, Password>();
+            CreateMap<PasswordUpdateDto, Password>();
+            CreateMap<Password, RoleUpdateDto>();
+
+
 
 
         }
