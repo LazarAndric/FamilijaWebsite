@@ -17,7 +17,7 @@ namespace FamilijaApi.Data
             _context = context;
         }
 
-        public async void CreatePassword(Password password)
+        public async Task CreatePassword(Password password)
         {
             await _context.Passwords.AddAsync(password);
         }

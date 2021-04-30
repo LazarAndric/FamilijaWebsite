@@ -110,10 +110,16 @@ namespace FamilijaApi.Controllers
                 }
                 var newUser = new User(){ EMail= user.Email, Username= user.Username, ContractNumber="asdf29347hkfd"};
                 var isCreated= await _userRepo.CreateUserAsync(newUser);
+                await _userRepo.SaveChanges();
                 UserRole role= new UserRole(){RoleId=1,UserId=2};
                 await _rolerepo.CreateRole(role);
                 var existRole=await _rolerepo.GetRoleByRoleId(role.RoleId);
                 var jwtToken=await JwtTokenUtility.GenerateJwtToken(newUser,existRole,_jwtConfig, _authRepo);
+                var addedUser= await _userRepo.FindByEmailAsync(newUser.EMail);
+                var pw=PasswordUtility.GenerateSaltedHash(10, user.Password);
+                pw.UserId=addedUser.Id;
+                await _passwordRepo.CreatePassword(pw);
+                await _passwordRepo.SaveChanges();
                 return Ok(new CommunicationModel<User>(){
                     AuthResult=jwtToken,
                     GenericModel= newUser

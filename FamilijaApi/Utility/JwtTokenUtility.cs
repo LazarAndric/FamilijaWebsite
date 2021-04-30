@@ -141,13 +141,6 @@ namespace FamilijaApi.Utility
             dateTime= dateTime.AddSeconds(unixTimeStamp).ToLocalTime();
             return dateTime;
         }
-
-        public static AuthResult Result(bool isSucess, List<string> errors){
-            return new AuthResult(){
-                    Success=isSucess,
-                    Errors=errors
-                };
-        }
         public static AuthResult Result(bool isSucess, string message){
             return new AuthResult(){
                     Success=isSucess,

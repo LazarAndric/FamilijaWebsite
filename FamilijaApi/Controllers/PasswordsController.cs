@@ -2,6 +2,7 @@
 using FamilijaApi.Data;
 using FamilijaApi.DTOs;
 using FamilijaApi.Models;
+using FamilijaApi.Utility;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -32,19 +33,7 @@ namespace FamilijaApi.Controllers
             return Ok(_mapper.Map<PasswordReadDto>(content));
         }
 
-        public static Password GenerateSaltedHash(int size, string password)
-        {
-            var saltBytes = new byte[size];
-            var provider = new RNGCryptoServiceProvider();
-            provider.GetNonZeroBytes(saltBytes);
-            var salt = Convert.ToBase64String(saltBytes);
-
-            var rfc2898DeriveBytes = new Rfc2898DeriveBytes(password, saltBytes, 10000);
-            var hashPassword = Convert.ToBase64String(rfc2898DeriveBytes.GetBytes(256));
-
-            Password hashSalt = new Password { Hash = hashPassword, Salt = salt };
-            return hashSalt;
-        }
+        
 
 
         [HttpPost]
@@ -52,9 +41,9 @@ namespace FamilijaApi.Controllers
         {
             var password = _mapper.Map<Password>(passwordCreateDto);
             string password1 = passwordCreateDto.Password;
-            Password hash = GenerateSaltedHash(10, password1);
+            Password hash = PasswordUtility.GenerateSaltedHash(10, password1);
             hash.UserId = password.UserId;
-            _passwordRepo.CreatePassword(hash);
+            await _passwordRepo.CreatePassword(hash);
 
             await _passwordRepo.SaveChanges();
 
@@ -72,7 +61,7 @@ namespace FamilijaApi.Controllers
             string password1 = updateModelPassword.Hash;
             
 
-            Password hash = GenerateSaltedHash(10, password1);
+            Password hash = PasswordUtility.GenerateSaltedHash(10, password1);
             hash.UserId = passwordUpdateDto.UserId;
             _mapper.Map(passwordUpdateDto, hash);
             _passwordRepo.UpdatePassword(hash);
