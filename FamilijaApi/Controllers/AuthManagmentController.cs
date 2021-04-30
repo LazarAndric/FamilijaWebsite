@@ -91,9 +91,8 @@ namespace FamilijaApi.Controllers
             return BadRequest(result);
         }
 
-        [HttpPost]
-        [Route("Register")]
-        [Authorize(Roles="MODERATOR")]
+        [HttpPost("{action}")]
+        //[Authorize(Roles="MODERATOR")]
         [AllowAnonymous]
         public async Task<IActionResult> Register([FromBody] UserRegistrationDto user)
         {
@@ -109,7 +108,7 @@ namespace FamilijaApi.Controllers
                     _result=JwtTokenUtility.Result(false,"Username already in use");
                     return BadRequest(_result);
                 }
-                var newUser = new User(){ EMail= user.Email, Username= user.Username};
+                var newUser = new User(){ EMail= user.Email, Username= user.Username, ContractNumber="asdf29347hkfd"};
                 var isCreated= await _userRepo.CreateUserAsync(newUser);
                 UserRole role= new UserRole(){RoleId=1,UserId=2};
                 await _rolerepo.CreateRole(role);

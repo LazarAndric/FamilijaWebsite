@@ -13,11 +13,5 @@ namespace FamilijaApi.Models
         public string Number { get; set; }
         public string PostalCode { get; set; }
         public string Place { get; set; }
-
-        [ForeignKey(nameof(UserId))]
-        public User User { get; set; }
-
-
-
     }
 }

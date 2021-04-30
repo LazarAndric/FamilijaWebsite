@@ -17,10 +17,8 @@ namespace FamilijaApi.Models
         // public UserInfo UserInfo { get; set; }
         // public PersonalInfo Info { get; set; }
         // public Address Address { get; set; }
-        [ForeignKey("ReferralUser")]
         public int ReferralId { get; set; }
         public string ContractNumber { get; set; }
         //public bool IsConfirmed { get; set; }
-        public User ReferralUser { get; set; }
     }
 }
