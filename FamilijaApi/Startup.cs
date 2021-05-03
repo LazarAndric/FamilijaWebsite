@@ -44,8 +44,8 @@ namespace FamilijaApi
                 IssuerSigningKey= new SymmetricSecurityKey(key),
                 ValidateIssuer= false,
                 ValidateAudience=false,
-                ValidateLifetime=true,
-                RequireExpirationTime=false
+                ValidateLifetime=false,
+                RequireExpirationTime=true
             };
             services.AddAuthentication(options=>{
                options.DefaultAuthenticateScheme=JwtBearerDefaults.AuthenticationScheme;

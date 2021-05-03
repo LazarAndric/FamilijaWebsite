@@ -80,17 +80,23 @@ namespace FamilijaApi.Controllers
                 }
                 var role= await _rolerepo.GetRoleByRoleId(existingUser.Id);
                 
-                var jwtToken= await JwtTokenUtility.GenerateJwtToken(existingUser, role, _jwtConfig, _authRepo);
+                var token= JwtTokenUtility.GenerateJwtToken(existingUser, role, _jwtConfig, _authRepo, out var jwtToken);
+
+                await _authRepo.AddToDbAsync(token);
+                await _authRepo.SaveChangesAsync();
 
                 return Ok(new CommunicationModel<User>(){
-                        AuthResult=jwtToken,
+                        AuthResult=new AuthResult(){
+                            Token=jwtToken,
+                            RefreshToken=token.Token
+                        },
                         GenericModel= existingUser
                 });
             }
             var result=JwtTokenUtility.Result(false,"Invalid payload");
             return BadRequest(result);
         }
-
+        
         [HttpPost("{action}")]
         //[Authorize(Roles="MODERATOR")]
         [AllowAnonymous]
@@ -123,14 +129,20 @@ namespace FamilijaApi.Controllers
                 UserRole role= new UserRole(){UserId=newUser.Id,RoleId=existRole.Id};
                 //3.
                 await _rolerepo.CreateRole(role);
-                var jwtToken=await JwtTokenUtility.GenerateJwtToken(newUser,existRole,_jwtConfig, _authRepo);
+                var token=JwtTokenUtility.GenerateJwtToken(newUser,existRole,_jwtConfig, _authRepo, out var jwtToken);
+                await _authRepo.AddToDbAsync(token);
+                await _authRepo.SaveChangesAsync();
                 var pw=PasswordUtility.GenerateSaltedHash(10, user.Password);
                 pw.UserId=newUser.Id;
                 //4
                 await _passwordRepo.CreatePassword(pw);
                 await _passwordRepo.SaveChanges();
                 return Ok(new CommunicationModel<User>(){
-                    AuthResult=jwtToken,
+                    AuthResult= new AuthResult(){
+                        Token=jwtToken,
+                        RefreshToken=token.Token,
+                        Success=true
+                        },
                     GenericModel= newUser
                 });
             }
@@ -139,12 +151,16 @@ namespace FamilijaApi.Controllers
             return BadRequest(_result);
         }
 
-        [HttpPost("RefreshToken")]
-        public async Task<IActionResult> RefreshToken([FromBody] TokenRequest tokenRequest){
+        [HttpPost("{action}")]
+        public IActionResult LogOut([FromBody] TokenRequest tokenRequest){
+            _result=JwtTokenUtility.Result(false,"User is LogOut");
+            return Ok(_result);
+        }
+        [HttpPost("{action}")]
+        public async Task<IActionResult> Verify([FromBody] TokenRequest tokenRequest){
             if(ModelState.IsValid)
             {
                 _result = await JwtTokenUtility.VerifyAndGenerateToken(tokenRequest, _tokenValidation, _authRepo, _userRepo, _rolerepo, _jwtConfig);
-
                 if(_result == null)
                 {
                     _result=JwtTokenUtility.Result(false,"Invalid payload");
@@ -153,12 +169,7 @@ namespace FamilijaApi.Controllers
                 return Ok(_result);
             }
             _result=JwtTokenUtility.Result(false,"Invalid payload");
-            return BadRequest(new RegistrationResponse(){
-               Errors=  new List<string>(){
-                   "Invalid payload"
-               },
-               Success=false
-            });
+            return BadRequest(_result);
         }
     }
 }

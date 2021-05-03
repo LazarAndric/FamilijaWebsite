@@ -44,7 +44,7 @@ namespace FamilijaApi.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateFinance(int id, FinanceUpdateDto addressUpdateDto)
         {
-            var updateModelFinance = _financeRepo.GetFinance(id).Result;
+            var updateModelFinance = await _financeRepo.GetFinance(id);
             if (updateModelFinance == null)
             {
                 return NotFound();
