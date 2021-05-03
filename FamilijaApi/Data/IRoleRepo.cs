@@ -12,5 +12,6 @@ namespace FailijaApi.Data
         Task<bool> SaveChanges();
         void UpdateRole(Role updateModelRole);
         void DeleteRole(Role deleteModelRole);
+        Task<Role> GetRoleByRoleNamed(string name);
     }
 }

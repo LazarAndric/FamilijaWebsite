@@ -1,5 +1,6 @@
 using System;
 using System.Security.Cryptography;
+using System.Text.RegularExpressions;
 using FamilijaApi.Models;
 
 namespace FamilijaApi.Utility
@@ -25,6 +26,37 @@ namespace FamilijaApi.Utility
 
             Password hashSalt = new Password { Hash = hashPassword, Salt = salt };
             return hashSalt;
+        }
+
+        public static bool ValidatePassword(string password, out string message){
+            var hasMiniMaxChars = new Regex(@".{8,15}");
+            var hasNumber = new Regex(@"[0-9]+");
+            var hasUpperChar = new Regex(@"[A-Z]+");
+            var hasLowerChar = new Regex(@"[a-z]+");
+            var hasSymbols = new Regex(@"[!@#$%^&*()_+=\[{\]};:<>|./?,-]");
+
+            if(!hasMiniMaxChars.IsMatch(password)){
+                message="Password must contain 8-15 characters";
+                return false;
+            }
+            if(!hasNumber.IsMatch(password)){
+                message="Password must contain number";
+                return false;
+            }
+            if(!hasUpperChar.IsMatch(password)){
+                message="Password must contain upper char";
+                return false;
+            }
+            if(!hasLowerChar.IsMatch(password)){
+                message="Password must contain lower case";
+                return false;
+            }
+            if(!hasSymbols.IsMatch(password)){
+                message="Password must contain at least one character";
+                return false;
+            }
+            message="all is okey";
+            return true;
         }
     }
 }

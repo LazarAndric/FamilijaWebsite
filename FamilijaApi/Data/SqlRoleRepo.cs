@@ -35,6 +35,11 @@ namespace FamilijaApi.Data
         {
             return await _context.Roles.FirstOrDefaultAsync(item => item.Id == id);
         }
+        public async Task<Role> GetRoleByRoleNamed(string name)
+        {
+            return await _context.Roles.FirstOrDefaultAsync(item => item.Value == name);
+        }
+
 
         public async Task<bool> SaveChanges()
         {

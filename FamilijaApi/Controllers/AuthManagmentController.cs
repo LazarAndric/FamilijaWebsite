@@ -98,26 +98,35 @@ namespace FamilijaApi.Controllers
         {
             if(ModelState.IsValid)
             {
-                var existing = await _userRepo.FindByEmailAsync(user.Email);
-                if(existing!=null){
-                    _result=JwtTokenUtility.Result(false,"Email already in use");
+                //var existing = await _userRepo.FindByEmailAsync(user.Email);
+                // if(existing!=null){
+                //     _result=JwtTokenUtility.Result(false,"Email already in use");
+                //     return BadRequest(_result);
+                // }
+                // existing = await _userRepo.GetUserByUsernameAsync(user.Username);
+                // if(existing!=null){
+                //     _result=JwtTokenUtility.Result(false,"Username already in use");
+                //     return BadRequest(_result);
+                // }
+                var newUser = new User(){ EMail= user.Email, Username= user.Username, ContractNumber=user.ContractNumber};
+                var isValid=PasswordUtility.ValidatePassword(user.Password, out var message);
+                if(!isValid)
+                {
+                    _result=JwtTokenUtility.Result(false,message);
                     return BadRequest(_result);
                 }
-                existing = await _userRepo.GetUserByUsernameAsync(user.Username);
-                if(existing!=null){
-                    _result=JwtTokenUtility.Result(false,"Username already in use");
-                    return BadRequest(_result);
-                }
-                var newUser = new User(){ EMail= user.Email, Username= user.Username, ContractNumber="asdf29347hkfd"};
+                //1.
                 var isCreated= await _userRepo.CreateUserAsync(newUser);
                 await _userRepo.SaveChanges();
-                UserRole role= new UserRole(){RoleId=1,UserId=2};
+                //2.
+                var existRole=await _rolerepo.GetRoleByRoleNamed("admin");
+                UserRole role= new UserRole(){UserId=newUser.Id,RoleId=existRole.Id};
+                //3.
                 await _rolerepo.CreateRole(role);
-                var existRole=await _rolerepo.GetRoleByRoleId(role.RoleId);
                 var jwtToken=await JwtTokenUtility.GenerateJwtToken(newUser,existRole,_jwtConfig, _authRepo);
-                var addedUser= await _userRepo.FindByEmailAsync(newUser.EMail);
                 var pw=PasswordUtility.GenerateSaltedHash(10, user.Password);
-                pw.UserId=addedUser.Id;
+                pw.UserId=newUser.Id;
+                //4
                 await _passwordRepo.CreatePassword(pw);
                 await _passwordRepo.SaveChanges();
                 return Ok(new CommunicationModel<User>(){
