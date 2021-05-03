@@ -7,6 +7,8 @@ using FamilijaApi.DTOs;
 using FamilijaApi.Models;
 using System;
 using System.Security.Cryptography;
+using System.Net.Mail;
+using FamilijaApi.Utility;
 
 namespace FamilijaApi.Controllers
 {
@@ -79,5 +81,13 @@ namespace FamilijaApi.Controllers
             await _userRepo.SaveChanges();
             return NoContent();
         }
+        [HttpGet("{action}")]
+
+        public async Task<IActionResult> SendMail()
+        {
+           await MailUtility.CreateMessageWithAttachment();
+             return Ok();
+        }
+
     }
 }
