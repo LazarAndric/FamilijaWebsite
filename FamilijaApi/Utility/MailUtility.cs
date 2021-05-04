@@ -1,38 +1,43 @@
-﻿using System;
-using System.Collections;
+﻿using FamilijaApi.Models;
 using System.Collections.Generic;
-using System.Linq;
-using System.Net;
 using System.Net.Mail;
-using System.Net.Mime;
 using System.Threading.Tasks;
 
 namespace FamilijaApi.Utility
 {
     public static class MailUtility
     {
-        public async static Task<bool> CreateMessageWithAttachment()
+        public async static Task<bool> CreateMessageWithAttachment(Email email)
         {
-            var fromAddress = new MailAddress("lazarndrc@gmail.com", "Lazar Andric");
-            var toAddress = new MailAddress("19petrovic97@gmail.com", "Baltazar");
-            const string fromPassword = "Lakilaki97";
-          
-
             MailMessage mm = new MailMessage();
-            mm.To.Add(toAddress);
-            mm.Body = "body";
-            mm.Subject = "subject";
-            mm.From = fromAddress;
 
+            var fromAddress = new MailAddress("familijaapi@gmail.com");
+            foreach (var item in email.To)
+            {   
+                MailAddress.TryCreate(item, out var mail);
+                mm.To.Add(mail);
+
+            }
+            const string fromPassword = "familija97";
+
+            mm.From = fromAddress;
+            mm.Body = email.Body;
+            mm.Subject = email.Subject;
 
 
             var smtp = new SmtpClient("smtp.gmail.com");
             smtp.Port = 587;
-            smtp.UseDefaultCredentials = true;
+            smtp.UseDefaultCredentials = false;
             smtp.EnableSsl = true;
             smtp.Credentials = new System.Net.NetworkCredential(fromAddress.Address, fromPassword);
+            smtp.DeliveryMethod = SmtpDeliveryMethod.Network;
             await smtp.SendMailAsync(mm);
+            
             return true;
         }
     }
+
+    
 }
+
+

@@ -9,6 +9,8 @@ using System;
 using System.Security.Cryptography;
 using System.Net.Mail;
 using FamilijaApi.Utility;
+using FamilijaApi.Configuration;
+using Microsoft.AspNetCore.Identity.UI.Services;
 
 namespace FamilijaApi.Controllers
 {
@@ -22,7 +24,7 @@ namespace FamilijaApi.Controllers
         public UsersController(IUserRepo userRepo, IMapper mapper)
         {
             _mapper = mapper;
-            _userRepo=userRepo;
+            _userRepo = userRepo;
         }
 
         public async Task<IActionResult> GeAlltUsers()
@@ -81,11 +83,13 @@ namespace FamilijaApi.Controllers
             await _userRepo.SaveChanges();
             return NoContent();
         }
+
         [HttpGet("{action}")]
 
-        public async Task<IActionResult> SendMail()
+        public async Task<IActionResult> SendMail([FromBody]Email mail)
         {
-           await MailUtility.CreateMessageWithAttachment();
+            
+           await MailUtility.CreateMessageWithAttachment(mail);
              return Ok();
         }
 

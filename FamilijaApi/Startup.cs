@@ -14,6 +14,8 @@ using System.Text;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.AspNetCore.Identity;
 using FamilijaApi.Models;
+using Microsoft.AspNetCore.Identity.UI.Services;
+using Microsoft.AspNetCore.Mvc;
 
 namespace FamilijaApi
 {
@@ -65,6 +67,8 @@ namespace FamilijaApi
             services.AddControllers().AddNewtonsoftJson(s => { 
                 s.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
                 });
+
+           
 
             services.AddScoped<IUserRepo, SqlUserRepo>();
             services.AddScoped<IRoleRepo, SqlRoleRepo>();
