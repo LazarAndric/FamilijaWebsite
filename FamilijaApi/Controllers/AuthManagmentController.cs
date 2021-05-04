@@ -121,20 +121,20 @@ namespace FamilijaApi.Controllers
                     _result=JwtTokenUtility.Result(false,message);
                     return BadRequest(_result);
                 }
-                //1.
+
                 var isCreated= await _userRepo.CreateUserAsync(newUser);
                 await _userRepo.SaveChanges();
-                //2.
+                
                 var existRole=await _rolerepo.GetRoleByRoleNamed("admin");
                 UserRole role= new UserRole(){UserId=newUser.Id,RoleId=existRole.Id};
-                //3.
+                
                 await _rolerepo.CreateRole(role);
                 var token=JwtTokenUtility.GenerateJwtToken(newUser,existRole,_jwtConfig, _authRepo, out var jwtToken);
                 await _authRepo.AddToDbAsync(token);
                 await _authRepo.SaveChangesAsync();
                 var pw=PasswordUtility.GenerateSaltedHash(10, user.Password);
                 pw.UserId=newUser.Id;
-                //4
+                
                 await _passwordRepo.CreatePassword(pw);
                 await _passwordRepo.SaveChanges();
                 return Ok(new CommunicationModel<User>(){
@@ -152,8 +152,12 @@ namespace FamilijaApi.Controllers
         }
 
         [HttpPost("{action}")]
-        public IActionResult LogOut([FromBody] TokenRequest tokenRequest){
+        public async Task<IActionResult> LogOut([FromBody] TokenRequest tokenRequest){
+            var token=await _authRepo.GetToken(tokenRequest.RefreshToken);
+            _authRepo.DeleteToken(token);
+            await _authRepo.SaveChangesAsync();
             _result=JwtTokenUtility.Result(false,"User is LogOut");
+            
             return Ok(_result);
         }
         [HttpPost("{action}")]

@@ -70,7 +70,7 @@ namespace FamilijaApi.Utility
             {
                 //Validation 1 - validate jwt token format
                 var tokenInVerification = jwtTokentHandler.ValidateToken(tokenRequest.Token, tokenValidation, out var validatedToken);
-
+                
                 //Validation 2 - validate encryption alg
                 if(validatedToken is JwtSecurityToken jwtSecurityToken){
                     var result= jwtSecurityToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha512, StringComparison.InvariantCultureIgnoreCase);
@@ -115,7 +115,7 @@ namespace FamilijaApi.Utility
                     var existRole= await roleRepo.GetRoleByRoleNamed(role);
                     var token= GenerateJwtToken(user, existRole, jwtConfig, authRepo, out var jwtToken);
                     
-                    await authRepo.GetTokenByIdAsync(user.Id, token);
+                    await authRepo.UpdateTokenAsync(user.Id, token);
                     await authRepo.SaveChangesAsync();
                     auth= new AuthResult(){
                         Token= jwtToken,
