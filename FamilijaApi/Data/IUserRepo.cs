@@ -14,5 +14,6 @@ namespace FailijaApi.Data
         Task<bool> SaveChanges();
         void UpdateUser(User updateModelUser);
         void DeleteUser(User deleteModelUser);
+        void UpdateCUser(bool v);
     }
 }

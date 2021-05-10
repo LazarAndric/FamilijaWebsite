@@ -7,7 +7,7 @@ namespace FamilijaApi.Utility
 {
     public static class MailUtility
     {
-        public async static Task<bool> CreateMessageWithAttachment(Email email)
+        public async static Task<bool> SendEmail(Email email)
         {
             MailMessage mm = new MailMessage();
 
@@ -23,7 +23,7 @@ namespace FamilijaApi.Utility
             mm.From = fromAddress;
             mm.Body = email.Body;
             mm.Subject = email.Subject;
-
+            mm.IsBodyHtml = true;
 
             var smtp = new SmtpClient("smtp.gmail.com");
             smtp.Port = 587;
@@ -35,6 +35,8 @@ namespace FamilijaApi.Utility
             
             return true;
         }
+
+     
     }
 
     

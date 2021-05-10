@@ -14,6 +14,11 @@ namespace FamilijaApi.Profiles
             CreateMap<User, UserUpdateDto>();
             CreateMap<User, PasswordReadDto>();
 
+            CreateMap<ConfirmedEmailDto, User>();
+            CreateMap<User, ConfirmedEmailDto>();
+
+
+
 
 
             CreateMap<Address, AddressReadDto>();

@@ -89,9 +89,47 @@ namespace FamilijaApi.Controllers
         public async Task<IActionResult> SendMail([FromBody]Email mail)
         {
             
-           await MailUtility.CreateMessageWithAttachment(mail);
+           await MailUtility.SendEmail(mail);
              return Ok();
         }
 
+        [HttpGet("{action}/{id}/{link}/{body}")]
+
+        public async Task<IActionResult> SendConfirmedMail(int id, string link, string body)
+        {
+            var mail = new Email();
+            mail.To = new List<string>();
+            var e = await _userRepo.GetUserByIdAsync(id);
+            string email = e.EMail.ToString();
+            mail.To.Add(email);
+            mail.Subject = "Confirmed Mail";
+            string b = " <a href='"+link+"'> Click here </a>";
+
+            mail.Body = b;
+            await MailUtility.SendEmail(mail);
+            return Ok();
+        }
+
+        [HttpPut("{action}/{id}")]
+        public async Task<IActionResult> UpdateConfirmedMail(int id, ConfirmedEmailDto confirmedEmailDto)
+        {
+            var updateModelUser = _userRepo.GetUserByIdAsync(id).Result;
+            if (updateModelUser == null)
+            {
+                return NotFound();
+            }
+
+            if (updateModelUser.EmailConfirmed == true)
+            {
+                return Ok("Mejl je verifikovan");
+            }
+
+            _mapper.Map(confirmedEmailDto, updateModelUser);
+            _userRepo.UpdateCUser(updateModelUser.EmailConfirmed = true);
+            await _userRepo.SaveChanges();
+            return Ok("Uspesno ste verifikovali mejl");
+        }
+
+        
     }
 }

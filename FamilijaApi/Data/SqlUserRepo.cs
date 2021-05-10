@@ -67,5 +67,10 @@ namespace FamilijaApi.Data
         {
             return await _context.Users.FirstOrDefaultAsync(item=> item.Username.Equals(username));
         }
+
+        public void UpdateCUser(bool v)
+        {
+
+        }
     }
 }

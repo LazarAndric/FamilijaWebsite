@@ -10,8 +10,11 @@ namespace FamilijaApi.Models
         [Key]
         public int  Id { get; set; }
         public string Username { get; set; }
-        [EmailAddress]
+        //[EmailAddress]
         public string EMail { get; set; }
+
+        public bool EmailConfirmed { get; set; }
+
         //public string Password { get; set; }
         // public Contact Contact { get; set; }
         // public UserInfo UserInfo { get; set; }
