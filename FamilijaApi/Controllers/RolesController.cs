@@ -23,13 +23,13 @@ namespace FamilijaApi.Controllers
             _mapper = mapper;
         }
 
-        [HttpGet("{id}")]
-        public async Task<ActionResult<RoleReadDto>> GetRole(int id)
-        {
-            var content = await _roleRepo.GetRole(id);
-            if (content == null) return NoContent();
-            return Ok(_mapper.Map<RoleReadDto>(content));
-        }
+        //[HttpGet("{id}")]
+        //public async Task<ActionResult<RoleReadDto>> GetRole(int id)
+        //{
+        //    var content = await _roleRepo.GetRole(id);
+        //    if (content == null) return NoContent();
+        //    return Ok(_mapper.Map<RoleReadDto>(content));
+        //}
 
         // [HttpPost]
         // public async Task<IActionResult> CreateRole([FromBody] RoleCreateDto roleCreateDto)

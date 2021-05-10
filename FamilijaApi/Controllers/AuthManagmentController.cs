@@ -24,7 +24,7 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace FamilijaApi.Controllers
 {
-    
+
     [Route("auth")]
     [ApiController]
     [Authorize(AuthenticationSchemes= JwtBearerDefaults.AuthenticationScheme)]
@@ -41,63 +41,63 @@ namespace FamilijaApi.Controllers
 
         public AuthManagmentController(IPasswordRepo passwordRepo, IRoleRepo roleRepo, TokenValidationParameters tokenValidation, IMapper mapper, IAuthRepo authRepo, IUserRepo userRepo, IOptionsMonitor<Jwtconfig> optionsMonitor)
         {
-            _passwordRepo=passwordRepo;
-            _rolerepo=roleRepo;
-            _tokenValidation=tokenValidation;
+            _passwordRepo = passwordRepo;
+            _rolerepo = roleRepo;
+            _tokenValidation = tokenValidation;
             _mapper = mapper;
-            _authRepo =authRepo;
-            _userRepo=userRepo;
-            _jwtConfig=optionsMonitor.CurrentValue;
+            _authRepo = authRepo;
+            _userRepo = userRepo;
+            _jwtConfig = optionsMonitor.CurrentValue;
         }
 
         [HttpPost("Login")]
         [AllowAnonymous]
-        public async Task<IActionResult> Login([FromBody] UserLoginRequest user){
-            if(ModelState.IsValid){
-                var existingUser=new User();
-                if(MailAddress.TryCreate(user.Username, out var mail))
-                    existingUser= await _userRepo.FindByEmailAsync(mail.Address);
-                else    existingUser= await _userRepo.GetUserByUsernameAsync(user.Username);
-                if(existingUser==null)
+        public async Task<IActionResult> Login([FromBody] UserLoginRequest user) {
+            if (ModelState.IsValid) {
+                var existingUser = new User();
+                if (MailAddress.TryCreate(user.Username, out var mail))
+                    existingUser = await _userRepo.FindByEmailAsync(mail.Address);
+                else existingUser = await _userRepo.GetUserByUsernameAsync(user.Username);
+                if (existingUser == null)
                 {
-                    _result=JwtTokenUtility.Result(false,"Invalid username");
+                    _result = JwtTokenUtility.Result(false, "Invalid username");
                     return BadRequest(_result);
                 }
 
-                var pass= await _passwordRepo.GetPassword(existingUser.Id);
-                var isCorrect= PasswordUtility.VerifyPassword(user.Password, pass.Hash, pass.Salt);
-                
-                if(!isCorrect)
+                var pass = await _passwordRepo.GetPassword(existingUser.Id);
+                var isCorrect = PasswordUtility.VerifyPassword(user.Password, pass.Hash, pass.Salt);
+
+                if (!isCorrect)
                 {
-                    _result=JwtTokenUtility.Result(false,"Invalid password");
+                    _result = JwtTokenUtility.Result(false, "Invalid password");
                     return BadRequest(_result);
                 }
 
-                var existRole= await _rolerepo.GetRole(existingUser.Id);
-                if(existingUser==null){
-                    _result=JwtTokenUtility.Result(false,"Invalid login request");
+                var existRole = await _rolerepo.GetRole(existingUser.Id);
+                if (existingUser == null) {
+                    _result = JwtTokenUtility.Result(false, "Invalid login request");
                     return BadRequest(_result);
                 }
-                var role= await _rolerepo.GetRoleByRoleId(existingUser.Id);
-                
-                var token= JwtTokenUtility.GenerateJwtToken(existingUser, role, _jwtConfig, _authRepo, out var jwtToken);
+                var role = await _rolerepo.GetRoleByRoleId(existingUser.Id);
+
+                var token = JwtTokenUtility.GenerateJwtToken(existingUser, role, _jwtConfig, _authRepo, out var jwtToken);
 
                 await _authRepo.AddToDbAsync(token);
                 await _authRepo.SaveChangesAsync();
 
-                return Ok(new CommunicationModel<User>(){
-                        AuthResult=new AuthResult(){
-                            Token=jwtToken,
-                            RefreshToken=token.Token
-                        },
-                        GenericModel= existingUser
+                return Ok(new CommunicationModel<User>() {
+                    AuthResult = new AuthResult() {
+                        Token = jwtToken,
+                        RefreshToken = token.Token
+                    },
+                    GenericModel = existingUser
                 });
             }
-            var result=JwtTokenUtility.Result(false,"Invalid payload");
+            var result = JwtTokenUtility.Result(false, "Invalid payload");
             return BadRequest(result);
         }
         
-        [HttpPost("{action}")]
+        [HttpPost("reg/{action}")]
         //[Authorize(Roles="MODERATOR")]
         [AllowAnonymous]
         public async Task<IActionResult> Register([FromBody] UserRegistrationDto user)
@@ -160,20 +160,21 @@ namespace FamilijaApi.Controllers
             
             return Ok(_result);
         }
-        [HttpPost("{action}")]
-        public async Task<IActionResult> Verify([FromBody] TokenRequest tokenRequest){
-            if(ModelState.IsValid)
-            {
-                _result = await JwtTokenUtility.VerifyAndGenerateToken(tokenRequest, _tokenValidation, _authRepo, _userRepo, _rolerepo, _jwtConfig);
-                if(_result == null)
-                {
-                    _result=JwtTokenUtility.Result(false,"Invalid payload");
-                    return BadRequest(_result);
-                }
-                return Ok(_result);
-            }
-            _result=JwtTokenUtility.Result(false,"Invalid payload");
-            return BadRequest(_result);
-        }
+        //[HttpPost("{action}")]
+        //public async Task<IActionResult> Verify([FromBody] TokenRequest tokenRequest)
+        //{
+        //    if (ModelState.IsValid)
+        //    {
+        //        _result = await JwtTokenUtility.VerifyAndGenerateToken(tokenRequest, _tokenValidation, _authRepo, _userRepo, _rolerepo, _jwtConfig);
+        //        if (_result == null)
+        //        {
+        //            _result = JwtTokenUtility.Result(false, "Invalid payload");
+        //            return BadRequest(_result);
+        //        }
+        //        return Ok(_result);
+        //    }
+        //    _result = JwtTokenUtility.Result(false, "Invalid payload");
+        //    return BadRequest(_result);
+        //}
     }
 }

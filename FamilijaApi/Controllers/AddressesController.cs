@@ -4,6 +4,8 @@ using AutoMapper;
 using System.Threading.Tasks;
 using FamilijaApi.DTOs;
 using FamilijaApi.Models;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 
 namespace FamilijaApi.Controllers
 {
@@ -19,7 +21,7 @@ namespace FamilijaApi.Controllers
             _addressRepo = adddressesRepo;
             _mapper = mapper;
         }
-
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [HttpGet("{id}")]
         public async Task<ActionResult<AddressReadDto>> GetAddress(int id)
         {
@@ -28,18 +30,18 @@ namespace FamilijaApi.Controllers
             return Ok(_mapper.Map<AddressReadDto>(content));
         }
 
-        [HttpPost]
-        public async Task<IActionResult> CreateAddress ([FromBody] AddressCreateDto addressCreateDto)
-        {
-            var addres = _mapper.Map<Address>(addressCreateDto);
-            _addressRepo.CreateAddress(addres);
-            await _addressRepo.SaveChanges();
+        //[HttpPost]
+        //public async Task<IActionResult> CreateAddress([FromBody] AddressCreateDto addressCreateDto)
+        //{
+        //    var addres = _mapper.Map<Address>(addressCreateDto);
+        //    _addressRepo.CreateAddress(addres);
+        //    await _addressRepo.SaveChanges();
 
-            return Created("", addres);
-        }
+        //    return Created("", addres);
+        //}
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateAddress (int id, AddressUpdateDto addressUpdateDto)
+        public async Task<IActionResult> UpdateAddress(int id, AddressUpdateDto addressUpdateDto)
         {
             var updateModelAddress = _addressRepo.GetAddress(id).Result;
             if (updateModelAddress == null)

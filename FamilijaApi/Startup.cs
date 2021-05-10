@@ -13,9 +13,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using System.Text;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.AspNetCore.Identity;
-using FamilijaApi.Models;
-using Microsoft.AspNetCore.Identity.UI.Services;
-using Microsoft.AspNetCore.Mvc;
+using Microsoft.OpenApi.Models;
 
 namespace FamilijaApi
 {
@@ -31,6 +29,15 @@ namespace FamilijaApi
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddMvc();
+
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "FamilijaApi", Version = "v1" });
+            });
+
+            services.AddSwaggerGenNewtonsoftSupport();
+
             services.Configure<Jwtconfig>(Configuration.GetSection("Jwtconfig"));
 
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
@@ -91,6 +98,8 @@ namespace FamilijaApi
                 app.UseDeveloperExceptionPage();
             }
 
+            app.UseSwagger();
+
             app.UseHttpsRedirection();
 
             app.UseRouting();
@@ -99,6 +108,10 @@ namespace FamilijaApi
             
             app.UseAuthorization();
 
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("v1/swagger.json", "FamilijaApi V1");
+            });
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
