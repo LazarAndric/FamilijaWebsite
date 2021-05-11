@@ -11,6 +11,7 @@ namespace FamilijaApi.Controllers
 {
     [ApiController]
     [Route("[Controller]")]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class AddressesController : ControllerBase
     {
         private IAdddressesRepo _addressRepo;
@@ -21,7 +22,7 @@ namespace FamilijaApi.Controllers
             _addressRepo = adddressesRepo;
             _mapper = mapper;
         }
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        
         [HttpGet("{id}")]
         public async Task<ActionResult<AddressReadDto>> GetAddress(int id)
         {

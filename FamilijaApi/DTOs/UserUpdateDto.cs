@@ -8,8 +8,9 @@ namespace FamilijaApi.DTOs
         [Required]
         [EmailAddress]
         public string EMail { get; set; }
-        public string Username { get; set; }
-        public int ReferralId { get; set; }
+        [Required]
         public string ContractNumber { get; set; }
+        [Required]
+        public string PhoneNumber { get; set; }
     }
 }

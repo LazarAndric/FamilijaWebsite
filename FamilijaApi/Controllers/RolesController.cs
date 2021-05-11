@@ -2,6 +2,8 @@
 using FailijaApi.Data;
 using FamilijaApi.DTOs;
 using FamilijaApi.Models;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -12,6 +14,7 @@ namespace FamilijaApi.Controllers
 {
     [ApiController]
     [Route("[Controller]")]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class RolesController : ControllerBase
     {
         private IRoleRepo _roleRepo;
@@ -23,13 +26,13 @@ namespace FamilijaApi.Controllers
             _mapper = mapper;
         }
 
-        [HttpGet("{id}")]
-        public async Task<ActionResult<RoleReadDto>> GetRole(int id)
-        {
-            var content = await _roleRepo.GetRole(id);
-            if (content == null) return NoContent();
-            return Ok(_mapper.Map<RoleReadDto>(content));
-        }
+        // [HttpGet("{id}")]
+        // public async Task<ActionResult<RoleReadDto>> GetRole(int id)
+        // {
+        //     var content = await _roleRepo.GetRole(id);
+        //     if (content == null) return NoContent();
+        //     return Ok(_mapper.Map<RoleReadDto>(content));
+        // }
 
         //[HttpPost]
         //public async Task<IActionResult> CreateRole([FromBody] RoleCreateDto roleCreateDto)

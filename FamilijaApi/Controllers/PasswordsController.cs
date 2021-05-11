@@ -1,8 +1,11 @@
 ﻿using AutoMapper;
 using FamilijaApi.Data;
 using FamilijaApi.DTOs;
+using FamilijaApi.DTOs.Requests;
 using FamilijaApi.Models;
 using FamilijaApi.Utility;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -14,6 +17,7 @@ namespace FamilijaApi.Controllers
 {
     [ApiController]
     [Route("[Controller]")]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class PasswordsController : ControllerBase
     {
         private IPasswordRepo _passwordRepo;
@@ -25,65 +29,36 @@ namespace FamilijaApi.Controllers
             _mapper = mapper;
         }
 
-        //[HttpGet("{id}")]
-        //public async Task<ActionResult<PasswordReadDto>> GetPassword(int id)
-        //{
-        //    var content = await _passwordRepo.GetPassword(id);
-        //    if (content == null) return NoContent();
-        //    return Ok(_mapper.Map<PasswordReadDto>(content));
-        //}
+        [HttpPut("{id}")]
+        public async Task<ActionResult<PasswordReadDto>> ChangePassword(int id /*FROM TOKEN*/ ,[FromBody] PasswordChangeRequest passwords)
+        {
+            if(!PasswordUtility.ValidatePassword(passwords.NewPassword, out string msg))
+            {
+                BadRequest(JwtTokenUtility.Result(false, msg));
+            }
+            if(!passwords.NewPassword.Equals(passwords.ConfirmPassword))
+            {
+                BadRequest(JwtTokenUtility.Result(false, "Your confirm password is not same"));
+            }
+            var currentHashedPass=await _passwordRepo.GetPassword(id);
+            var currentPass= PasswordUtility.VerifyPassword(passwords.CurrentPassword, currentHashedPass.Hash, currentHashedPass.Salt);
+            if(!currentPass){
+                BadRequest(JwtTokenUtility.Result(false, "Your password is not correct"));
+            }
+            var newPass=PasswordUtility.GenerateSaltedHash(10, passwords.NewPassword);
+            newPass.Id=id;
+            try
+            {
+                await _passwordRepo.CreatePassword(newPass);
+                await _passwordRepo.SaveChanges();
+                return Created("", JwtTokenUtility.Result(true, "User is created"));
+            }
+            catch (System.Exception)
+            {
+                return BadRequest(JwtTokenUtility.Result(false,"Can't create password"));
+            }
+        }
 
-        
-
-
-        //[HttpPost]
-        //public async Task<IActionResult> CreatePassword([FromBody] PasswordCreateDto passwordCreateDto)
-        //{
-        //    var password = _mapper.Map<Password>(passwordCreateDto);
-        //    string password1 = passwordCreateDto.Password;
-        //    Password hash = PasswordUtility.GenerateSaltedHash(10, password1);
-        //    hash.UserId = password.UserId;
-        //    await _passwordRepo.CreatePassword(hash);
-
-        //    await _passwordRepo.SaveChanges();
-
-        //    return Created("", hash);
-        //}
-
-        //[HttpPut("{id}")]
-        //public async Task<IActionResult> UpdatePassword(int id, PasswordUpdateDto passwordUpdateDto)
-        //{
-        //    var updateModelPassword = _passwordRepo.GetPassword(id).Result;
-        //    if (updateModelPassword == null)
-        //    {
-        //        return NotFound();
-        //    }
-        //    string password1 = updateModelPassword.Hash;
-            
-
-        //    Password hash = PasswordUtility.GenerateSaltedHash(10, password1);
-        //    hash.UserId = passwordUpdateDto.UserId;
-        //    _mapper.Map(passwordUpdateDto, hash);
-        //    _passwordRepo.UpdatePassword(hash);
-
-        //    await _passwordRepo.SaveChanges();
-        //    return Ok();
-
-        //}
-
-        //[HttpDelete("{id}")]
-        //public ActionResult DeleteAddress(int id)
-        //{
-        //    var deleteModelPassword = _passwordRepo.GetPassword(id).Result;
-        //    if (deleteModelPassword == null)
-        //    {
-        //        return NotFound();
-        //    }
-
-        //    _passwordRepo.DeletePassword(deleteModelPassword);
-        //    _passwordRepo.SaveChanges();
-        //    return NoContent();
-        //}
 
     }
 }

@@ -9,7 +9,6 @@ namespace FamilijaApi.Models
     public class Password
     {
         [Key]
-
         public int Id { get; set; }
         public int UserId { get; set; }
         public string Hash { get; set; }

@@ -31,9 +31,9 @@ namespace FamilijaApi.Data
             _context.Passwords.Remove(deleteModelPassword);
         }
 
-        public async Task<Password> GetPassword(int id)
+        public async Task<Password> GetPassword(int userId)
         {
-            return await _context.Passwords.FirstOrDefaultAsync(item => item.UserId == id);
+            return await _context.Passwords.FirstOrDefaultAsync(item => item.UserId == userId);
         }
 
         public async Task<bool> SaveChanges()

@@ -9,7 +9,6 @@ namespace FailijaApi.Data
         Task<User> FindByEmailAsync(string email);
         Task<IEnumerable<User>> GetAllItems();
         Task<User> GetUserByIdAsync(int id);
-        Task<User> GetUserByUsernameAsync(string username);
         Task<bool> CreateUserAsync(User user);
         Task<bool> SaveChanges();
         void UpdateUser(User updateModelUser);

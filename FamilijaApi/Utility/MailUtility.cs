@@ -7,7 +7,7 @@ namespace FamilijaApi.Utility
 {
     public static class MailUtility
     {
-        public async static Task<bool> SendEmail(Email email)
+        public async static Task<bool> SendEmailAsyn(Email email)
         {
             MailMessage mm = new MailMessage();
 

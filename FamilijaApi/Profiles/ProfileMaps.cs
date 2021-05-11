@@ -26,11 +26,6 @@ namespace FamilijaApi.Profiles
             CreateMap<AddressUpdateDto, Address>();
             CreateMap<Address, AddressUpdateDto>();
 
-            CreateMap<Contact, ContactReadDto>();
-            CreateMap<ContactCreateDto, Contact>();
-            CreateMap<ContactUpdateDto, Contact>();
-            CreateMap<Contact, ContactUpdateDto>();
-
             CreateMap<PersonalInfo, PersonalInfoReadDto>();
             CreateMap<PersonalInfoCreateDto, PersonalInfo>();
             CreateMap<PersonalInfoUpdateDtos, PersonalInfo>();

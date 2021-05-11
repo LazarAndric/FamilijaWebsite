@@ -34,7 +34,8 @@ namespace FamilijaApi.Utility
                     new Claim(ClaimsIdentity.DefaultNameClaimType, user.Id.ToString()),
                     new Claim(ClaimsIdentity.DefaultRoleClaimType, role.Value),
                     new Claim(JwtRegisteredClaimNames.Email, user.EMail),
-                    new Claim(JwtRegisteredClaimNames.Sub, user.Username),
+                    new Claim(JwtRegisteredClaimNames.Nbf, DateTime.UtcNow.ToString()),
+                    new Claim(JwtRegisteredClaimNames.Iat, DateTime.UtcNow.ToString()),
                     new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
                 }),
                 Expires = DateTime.UtcNow.AddMinutes(5),
@@ -48,7 +49,7 @@ namespace FamilijaApi.Utility
                 JwtId= token.Id,
                 UserId= user.Id,
                 AddedDate= DateTime.UtcNow.ToLocalTime(),
-                ExpiryDate=DateTime.UtcNow.ToLocalTime().AddMonths(6),
+                ExpiryDate=DateTime.UtcNow.ToLocalTime().AddHours(1),
                 Token=RandomString(35)+Guid.NewGuid()
             };
             return refreshToken;
@@ -145,6 +146,7 @@ namespace FamilijaApi.Utility
             dateTime= dateTime.AddSeconds(unixTimeStamp).ToLocalTime();
             return dateTime;
         }
+        
         public static AuthResult Result(bool isSucess, string message){
             return new AuthResult(){
                     Success=isSucess,

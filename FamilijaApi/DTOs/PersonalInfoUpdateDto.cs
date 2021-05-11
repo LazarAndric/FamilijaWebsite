@@ -8,7 +8,6 @@ namespace FamilijaApi.DTOs
 {
     public class PersonalInfoUpdateDtos
     {
-        public int UserId { get; set; }
         [Required]
         public string FirstName { get; set; }
         [Required]

@@ -27,14 +27,13 @@ namespace FamilijaApi.Controllers
             _userRepo = userRepo;
         }
 
+        //FOR ADMIN OPTION
         //public async Task<IActionResult> GeAlltUsers()
         //{
         //    var items = await _userRepo.GetAllItems();
         //    if (items == null) return NoContent();
         //    var userlist = new List<User>();
-
         //    return Ok(_mapper.Map<List<UserReadDto>>(items));
-
         //}
 
         [HttpGet("{id}")]
@@ -84,52 +83,47 @@ namespace FamilijaApi.Controllers
             return NoContent();
         }
 
-        //[HttpGet("{action}")]
+        [HttpGet("{action}")]
+        public async Task<IActionResult> SendMail([FromBody]Email mail)
+        {
 
-        //public async Task<IActionResult> SendMail([FromBody]Email mail)
-        //{
+          await MailUtility.SendEmailAsyn(mail);
+            return Ok();
+        }
 
-        //   await MailUtility.SendEmail(mail);
-        //     return Ok();
-        //}
+        [HttpGet("{id}/{link}")]
 
-        //[HttpGet("{action}/{id}/{link}/{body}")]
+        public async Task<IActionResult> SendConfirmedMail(int id, string link)
+        {
+           var mail = new Email();
+           mail.To = new List<string>();
+           var e = await _userRepo.GetUserByIdAsync(id);
+           string email = e.EMail.ToString();
+           mail.To.Add(email);
+           mail.Subject = "Confirmed Mail";
+           mail.Body = " <a href='"+link+"'> Click here </a>";
+           await MailUtility.SendEmailAsyn(mail);
+           return Ok();
+        }
 
-        //public async Task<IActionResult> SendConfirmedMail(int id, string link, string body)
-        //{
-        //    var mail = new Email();
-        //    mail.To = new List<string>();
-        //    var e = await _userRepo.GetUserByIdAsync(id);
-        //    string email = e.EMail.ToString();
-        //    mail.To.Add(email);
-        //    mail.Subject = "Confirmed Mail";
-        //    string b = " <a href='"+link+"'> Click here </a>";
+        [HttpPut("{action}/{id}")]
+        public async Task<IActionResult> UpdateConfirmedMail(int id, ConfirmedEmailDto confirmedEmailDto)//ID FROM TOKEN
+        {
+           var updateModelUser = _userRepo.GetUserByIdAsync(id).Result;
+           if (updateModelUser == null)
+           {
+               return NotFound();
+           }
 
-        //    mail.Body = b;
-        //    await MailUtility.SendEmail(mail);
-        //    return Ok();
-        //}
+           if (updateModelUser.EmailConfirmed == true)
+           {
+               return Ok("Mail is already verify");
+           }
 
-        //[HttpPut("{action}/{id}")]
-        //public async Task<IActionResult> UpdateConfirmedMail(int id, ConfirmedEmailDto confirmedEmailDto)
-        //{
-        //    var updateModelUser = _userRepo.GetUserByIdAsync(id).Result;
-        //    if (updateModelUser == null)
-        //    {
-        //        return NotFound();
-        //    }
-
-        //    if (updateModelUser.EmailConfirmed == true)
-        //    {
-        //        return Ok("Mejl je verifikovan");
-        //    }
-
-        //    _mapper.Map(confirmedEmailDto, updateModelUser);
-        //    _userRepo.UpdateCUser(updateModelUser.EmailConfirmed = true);
-        //    await _userRepo.SaveChanges();
-        //    return Ok("Uspesno ste verifikovali mejl");
-        //}
-
-
+           _mapper.Map(confirmedEmailDto, updateModelUser);
+           _userRepo.UpdateCUser(updateModelUser.EmailConfirmed = true);
+           await _userRepo.SaveChanges();
+           return Ok("Succsse");
+        }
     }
 }

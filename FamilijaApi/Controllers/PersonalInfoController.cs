@@ -7,11 +7,14 @@ using System.Threading.Tasks;
 using FailijaApi.Data;
 using AutoMapper;
 using FamilijaApi.Models;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 namespace FamilijaApi.Controllers
 {
     [ApiController]
     [Route("[Controller]")]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class PersonalInfoController : ControllerBase
     {
         private IPersonalInfoRepo _personalInfoRepo;
@@ -24,21 +27,11 @@ namespace FamilijaApi.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<PersonalInfoReadDto>> GetPersonalInfo(int id)
+        public async Task<ActionResult<PersonalInfoReadDto>> GetPersonalInfo(int id)//FROM TOKEN
         {
             var content = await _personalInfoRepo.GetPersonalInfo(id);
             if (content == null) return NoContent();
             return Ok(_mapper.Map<PersonalInfoReadDto>(content));
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> CreatePersonalInfo([FromBody] PersonalInfoCreateDto personalInfoCreateDto)
-        {
-            var personalInfo = _mapper.Map<PersonalInfo>(personalInfoCreateDto);
-            _personalInfoRepo.CreatePersonalInfo(personalInfo);
-            await _personalInfoRepo.SaveChanges();
-
-            return Created("", personalInfo);
         }
 
         [HttpPut("{id}")]
@@ -54,7 +47,6 @@ namespace FamilijaApi.Controllers
             _personalInfoRepo.UpdatePersonalInfo(updateModelPersonalInfo);
             await _personalInfoRepo.SaveChanges();
             return Ok();
-
         }
 
         [HttpDelete("{id}")]

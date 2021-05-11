@@ -83,7 +83,6 @@ namespace FamilijaApi
             
 
             services.AddScoped<IAdddressesRepo, SqlAddressRepo>();
-            services.AddScoped<IContactRepo, SqlContactRepo>();
             services.AddScoped<IFinanceRepo, SqlFinanceRepo>();
             services.AddScoped<IPersonalInfoRepo, SqlPersonalInfoRepo>();
             services.AddScoped<IPasswordRepo, SqlPasswordRepo>();

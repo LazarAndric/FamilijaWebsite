@@ -25,10 +25,10 @@ using Microsoft.IdentityModel.Tokens;
 namespace FamilijaApi.Controllers
 {
 
-    [Route("auth")]
+    [Route("[Controller]")]
     [ApiController]
     [Authorize(AuthenticationSchemes= JwtBearerDefaults.AuthenticationScheme)]
-    public class AuthManagmentController : ControllerBase
+    public class AuthorizationsController : ControllerBase
     {
         private AuthResult _result;
         private readonly IRoleRepo _rolerepo;
@@ -39,7 +39,7 @@ namespace FamilijaApi.Controllers
         private readonly Jwtconfig _jwtConfig;
         private readonly TokenValidationParameters _tokenValidation;
 
-        public AuthManagmentController(IPasswordRepo passwordRepo, IRoleRepo roleRepo, TokenValidationParameters tokenValidation, IMapper mapper, IAuthRepo authRepo, IUserRepo userRepo, IOptionsMonitor<Jwtconfig> optionsMonitor)
+        public AuthorizationsController(IPasswordRepo passwordRepo, IRoleRepo roleRepo, TokenValidationParameters tokenValidation, IMapper mapper, IAuthRepo authRepo, IUserRepo userRepo, IOptionsMonitor<Jwtconfig> optionsMonitor)
         {
             _passwordRepo = passwordRepo;
             _rolerepo = roleRepo;
@@ -50,14 +50,13 @@ namespace FamilijaApi.Controllers
             _jwtConfig = optionsMonitor.CurrentValue;
         }
 
-        [HttpPost("Login")]
+        [HttpPost("logIn")]
         [AllowAnonymous]
         public async Task<IActionResult> Login([FromBody] UserLoginRequest user) {
             if (ModelState.IsValid) {
                 var existingUser = new User();
                 if (MailAddress.TryCreate(user.Username, out var mail))
                     existingUser = await _userRepo.FindByEmailAsync(mail.Address);
-                else existingUser = await _userRepo.GetUserByUsernameAsync(user.Username);
                 if (existingUser == null)
                 {
                     _result = JwtTokenUtility.Result(false, "Invalid username");
@@ -97,24 +96,18 @@ namespace FamilijaApi.Controllers
             return BadRequest(result);
         }
         
-        [HttpPost("reg/{action}")]
-        //[Authorize(Roles="MODERATOR")]
+        [HttpPost("registration")]
         [AllowAnonymous]
         public async Task<IActionResult> Register([FromBody] UserRegistrationDto user)
         {
             if(ModelState.IsValid)
             {
-                //var existing = await _userRepo.FindByEmailAsync(user.Email);
-                // if(existing!=null){
-                //     _result=JwtTokenUtility.Result(false,"Email already in use");
-                //     return BadRequest(_result);
-                // }
-                // existing = await _userRepo.GetUserByUsernameAsync(user.Username);
-                // if(existing!=null){
-                //     _result=JwtTokenUtility.Result(false,"Username already in use");
-                //     return BadRequest(_result);
-                // }
-                var newUser = new User(){ EMail= user.Email, Username= user.Username, ContractNumber=user.ContractNumber};
+                var existing = await _userRepo.FindByEmailAsync(user.Email);
+                if(existing!=null){
+                    _result=JwtTokenUtility.Result(false,"Email already in use");
+                    return BadRequest(_result);
+                }
+                var newUser = new User(){ EMail= user.Email , ContractNumber=user.ContractNumber};
                 var isValid=PasswordUtility.ValidatePassword(user.Password, out var message);
                 if(!isValid)
                 {
@@ -151,7 +144,7 @@ namespace FamilijaApi.Controllers
             return BadRequest(_result);
         }
 
-        [HttpPost("{action}")]
+        [HttpPost("logOut")]
         public async Task<IActionResult> LogOut([FromBody] TokenRequest tokenRequest){
             var token=await _authRepo.GetToken(tokenRequest.RefreshToken);
             _authRepo.DeleteToken(token);
@@ -160,21 +153,5 @@ namespace FamilijaApi.Controllers
             
             return Ok(_result);
         }
-        //[HttpPost("{action}")]
-        //public async Task<IActionResult> Verify([FromBody] TokenRequest tokenRequest)
-        //{
-        //    if (ModelState.IsValid)
-        //    {
-        //        _result = await JwtTokenUtility.VerifyAndGenerateToken(tokenRequest, _tokenValidation, _authRepo, _userRepo, _rolerepo, _jwtConfig);
-        //        if (_result == null)
-        //        {
-        //            _result = JwtTokenUtility.Result(false, "Invalid payload");
-        //            return BadRequest(_result);
-        //        }
-        //        return Ok(_result);
-        //    }
-        //    _result = JwtTokenUtility.Result(false, "Invalid payload");
-        //    return BadRequest(_result);
-        //}
     }
 }
