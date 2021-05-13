@@ -2,12 +2,16 @@ using FamilijaApi.DTOs;
 using FamilijaApi.Models;
 using AutoMapper;
 using System.Threading.Tasks;
+using FamilijaApi.Configuration;
 
 namespace FamilijaApi.Profiles
 {
     public class ProfileMaps : Profile
     {
         public ProfileMaps(){
+            CreateMap<AuthCreate, AuthResult>();
+            CreateMap<AuthResult, AuthCreate>();
+
             CreateMap<User, UserReadDto>();
             CreateMap<UserCreateDto, User>();
             CreateMap<UserUpdateDto, User>();
@@ -16,10 +20,6 @@ namespace FamilijaApi.Profiles
 
             CreateMap<ConfirmedEmailDto, User>();
             CreateMap<User, ConfirmedEmailDto>();
-
-
-
-
 
             CreateMap<Address, AddressReadDto>();
             CreateMap<AddressCreateDto, Address>();
@@ -45,10 +45,6 @@ namespace FamilijaApi.Profiles
             CreateMap<PasswordCreateDto, Password>();
             CreateMap<PasswordUpdateDto, Password>();
             CreateMap<Password, RoleUpdateDto>();
-
-
-
-
         }
     }
 }

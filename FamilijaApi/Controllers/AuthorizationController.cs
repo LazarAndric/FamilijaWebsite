@@ -31,23 +31,26 @@ namespace FamilijaApi.Controllers
     public class AuthorizationsController : ControllerBase
     {
         private AuthResult _result;
-        private readonly IRoleRepo _rolerepo;
-        private readonly IMapper _mapper;
+        private readonly IRoleRepo _roleRepo;
         private readonly IAuthRepo _authRepo;
         private readonly IUserRepo _userRepo;
         private readonly IPasswordRepo _passwordRepo;
-        private readonly Jwtconfig _jwtConfig;
-        private readonly TokenValidationParameters _tokenValidation;
+        private readonly JwtTokenUtility _jwtTokenUtil;
 
-        public AuthorizationsController(IPasswordRepo passwordRepo, IRoleRepo roleRepo, TokenValidationParameters tokenValidation, IMapper mapper, IAuthRepo authRepo, IUserRepo userRepo, IOptionsMonitor<Jwtconfig> optionsMonitor)
+        public AuthorizationsController(
+            IPasswordRepo passwordRepo, 
+            IRoleRepo roleRepo, 
+            TokenValidationParameters tokenValidation,
+            IAuthRepo authRepo, 
+            IUserRepo userRepo, 
+            IOptionsMonitor<Jwtconfig> optionsMonitor
+            )
         {
             _passwordRepo = passwordRepo;
-            _rolerepo = roleRepo;
-            _tokenValidation = tokenValidation;
-            _mapper = mapper;
+            _roleRepo = roleRepo;
             _authRepo = authRepo;
             _userRepo = userRepo;
-            _jwtConfig = optionsMonitor.CurrentValue;
+            _jwtTokenUtil=new JwtTokenUtility(authRepo, userRepo, roleRepo, optionsMonitor.CurrentValue, tokenValidation);
         }
 
         [HttpPost("logIn")]
@@ -59,7 +62,7 @@ namespace FamilijaApi.Controllers
                     existingUser = await _userRepo.FindByEmailAsync(mail.Address);
                 if (existingUser == null)
                 {
-                    _result = JwtTokenUtility.Result(false, "Invalid username");
+                    _result = JwtTokenUtility.ResultPW(false, "Invalid username");
                     return BadRequest(_result);
                 }
 
@@ -68,18 +71,18 @@ namespace FamilijaApi.Controllers
 
                 if (!isCorrect)
                 {
-                    _result = JwtTokenUtility.Result(false, "Invalid password");
+                    _result = JwtTokenUtility.ResultPW(false, "Invalid password");
                     return BadRequest(_result);
                 }
 
-                var existRole = await _rolerepo.GetRole(existingUser.Id);
+                var existRole = await _roleRepo.GetRole(existingUser.Id);
                 if (existingUser == null) {
-                    _result = JwtTokenUtility.Result(false, "Invalid login request");
+                    _result = JwtTokenUtility.ResultPW(false, "Invalid login request");
                     return BadRequest(_result);
                 }
-                var role = await _rolerepo.GetRoleByRoleId(existingUser.Id);
+                var role = await _roleRepo.GetRoleByRoleId(existingUser.Id);
 
-                var token = JwtTokenUtility.GenerateJwtToken(existingUser, role, _jwtConfig, _authRepo, out var jwtToken);
+                var token = _jwtTokenUtil.GenerateJwtToken(existingUser, role, out var jwtToken);
 
                 await _authRepo.AddToDbAsync(token);
                 await _authRepo.SaveChangesAsync();
@@ -92,7 +95,7 @@ namespace FamilijaApi.Controllers
                     GenericModel = existingUser
                 });
             }
-            var result = JwtTokenUtility.Result(false, "Invalid payload");
+            var result = JwtTokenUtility.ResultPW(false, "Invalid payload");
             return BadRequest(result);
         }
         
@@ -118,11 +121,11 @@ namespace FamilijaApi.Controllers
                 var isCreated= await _userRepo.CreateUserAsync(newUser);
                 await _userRepo.SaveChanges();
                 
-                var existRole=await _rolerepo.GetRoleByRoleNamed("admin");
+                var existRole=await _roleRepo.GetRoleByRoleNamed("admin");
                 UserRole role= new UserRole(){UserId=newUser.Id,RoleId=existRole.Id};
                 
-                await _rolerepo.CreateRole(role);
-                var token=JwtTokenUtility.GenerateJwtToken(newUser,existRole,_jwtConfig, _authRepo, out var jwtToken);
+                await _roleRepo.CreateRole(role);
+                var token = _jwtTokenUtil.GenerateJwtToken(newUser, existRole, out var jwtToken);
                 await _authRepo.AddToDbAsync(token);
                 await _authRepo.SaveChangesAsync();
                 var pw=PasswordUtility.GenerateSaltedHash(10, user.Password);

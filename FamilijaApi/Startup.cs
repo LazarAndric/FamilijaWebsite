@@ -51,6 +51,8 @@ namespace FamilijaApi
             var tokenvalidationParans= new TokenValidationParameters{
                 ValidateIssuerSigningKey= true,
                 IssuerSigningKey= new SymmetricSecurityKey(key),
+                RequireSignedTokens=true,
+                ClockSkew=TimeSpan.FromMinutes(2),
                 ValidateIssuer= false,
                 ValidateAudience=false,
                 ValidateLifetime=false,
