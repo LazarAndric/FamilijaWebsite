@@ -80,7 +80,7 @@ namespace FamilijaApi.Controllers
                     _result = JwtTokenUtility.ResultPW(false, "Invalid login request");
                     return BadRequest(_result);
                 }
-                var role = await _roleRepo.GetRoleByRoleId(existingUser.Id);
+                var role = await _roleRepo.GetRoleByRoleId(existRole.RoleId);
 
                 var token = _jwtTokenUtil.GenerateJwtToken(existingUser, role, out var jwtToken);
 
