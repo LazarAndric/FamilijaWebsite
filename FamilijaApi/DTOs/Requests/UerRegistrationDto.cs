@@ -12,5 +12,11 @@ namespace FamilijaApi.DTOs.Requests
         public string Password { get; set; }
         public string ContractNumber { get; set; }
         public string PhoneNumber { get; set; }
+        public string SponsorCode { get; set; }
+
+
+
+
+
     }
 }

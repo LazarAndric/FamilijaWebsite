@@ -147,7 +147,7 @@ namespace FamilijaApi.Utility
             }
         }
 
-        private string RandomString(int length)
+        public static string RandomString(int length)
         {
             var random=new Random();
             var chars= "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";

@@ -53,7 +53,7 @@ namespace FamilijaApi.Data
         }
 
 
-        public async Task<bool> SaveChanges()
+        public async Task<bool> SaveChangesAsync()
         {
            return (await _context.SaveChangesAsync() >= 0);
         }
@@ -67,5 +67,21 @@ namespace FamilijaApi.Data
         {
 
         }
+
+        public async Task<User> FindReferalAsync(string code)
+        {
+            return await _context.Users.FirstOrDefaultAsync(item => item.ReferralCode == code);
+        }
+
+        public Task FindReferalAsync(int referalID)
+        {
+            throw new NotImplementedException();
+        }
+
+        //public Task FindReferalAsync(int referalID)
+        //{
+        //    return _context.Users.FirstOrDefaultAsync(x => User.Equals(x.ReferralId, x.DateRegistration, referalID));
+        //}
+
     }
 }

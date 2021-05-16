@@ -15,5 +15,8 @@ namespace FamilijaApi.Models
         public int ReferralId { get; set; }
         public string ContractNumber { get; set; }
         public string PhoneNumber { get; set; }
+        public string ReferralCode { get; set; }
+        public DateTime DateRegistration { get; set; }
+
     }
 }

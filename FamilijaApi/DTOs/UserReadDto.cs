@@ -14,6 +14,8 @@ namespace FamilijaApi.DTOs
         public User ReferralUser { get; set; }
         public string ContractNumber { get; set; }
         public string PhoneNumber { get; set; }
+        public string ReferralCode { get; set; }
+
 
         //models
         public PersonalInfoReadDto Info { get; set; }

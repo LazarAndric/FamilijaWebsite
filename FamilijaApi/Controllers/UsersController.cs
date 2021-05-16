@@ -80,7 +80,7 @@ namespace FamilijaApi.Controllers
                 }
                 _mapper.Map(data.GenericModel, updateModelUser);
                 _userRepo.UpdateUser(updateModelUser);
-                await _userRepo.SaveChanges();
+                await _userRepo.SaveChangesAsync();
                 return Ok(finalAuth);
             }
             return Unauthorized(finalAuth);
@@ -98,7 +98,7 @@ namespace FamilijaApi.Controllers
                     return NotFound(finalAuth);
                 }
                 _userRepo.DeleteUser(deleteModelUser);
-                await _userRepo.SaveChanges();
+                await _userRepo.SaveChangesAsync();
                 return Ok(finalAuth);
             }
             return Unauthorized(finalAuth);
@@ -150,7 +150,7 @@ namespace FamilijaApi.Controllers
 
                 _mapper.Map(datas.GenericModel, updateModelUser);
                 _userRepo.UpdateCUser(updateModelUser.EmailConfirmed = true);
-                await _userRepo.SaveChanges();
+                await _userRepo.SaveChangesAsync();
                 return Ok(finalAuth);
             }
             return Unauthorized();

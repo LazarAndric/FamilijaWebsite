@@ -65,7 +65,6 @@ namespace FamilijaApi.Controllers
                     _result = JwtTokenUtility.ResultPW(false, "Invalid username");
                     return BadRequest(_result);
                 }
-
                 var pass = await _passwordRepo.GetPassword(existingUser.Id);
                 var isCorrect = PasswordUtility.VerifyPassword(user.Password, pass.Hash, pass.Salt);
 
@@ -110,7 +109,10 @@ namespace FamilijaApi.Controllers
                     _result=JwtTokenUtility.Result(false,"Email already in use");
                     return BadRequest(_result);
                 }
-                var newUser = new User(){ EMail= user.Email , ContractNumber=user.ContractNumber};
+
+
+                var refId = await _userRepo.FindReferalAsync(user.SponsorCode);
+                var newUser = new User() { EMail = user.Email, ContractNumber = user.ContractNumber, ReferralCode = JwtTokenUtility.RandomString(6), ReferralId = refId.Id, DateRegistration=DateTime.UtcNow.ToLocalTime() };
                 var isValid=PasswordUtility.ValidatePassword(user.Password, out var message);
                 if(!isValid)
                 {
@@ -119,7 +121,7 @@ namespace FamilijaApi.Controllers
                 }
 
                 var isCreated= await _userRepo.CreateUserAsync(newUser);
-                await _userRepo.SaveChanges();
+                await _userRepo.SaveChangesAsync();
                 
                 var existRole=await _roleRepo.GetRoleByRoleNamed("admin");
                 UserRole role= new UserRole(){UserId=newUser.Id,RoleId=existRole.Id};
@@ -156,5 +158,6 @@ namespace FamilijaApi.Controllers
             
             return Ok(_result);
         }
+
     }
 }

@@ -10,9 +10,11 @@ namespace FailijaApi.Data
         Task<IEnumerable<User>> GetAllItems();
         Task<User> GetUserByIdAsync(int id);
         Task<bool> CreateUserAsync(User user);
-        Task<bool> SaveChanges();
+        Task<bool> SaveChangesAsync();
         void UpdateUser(User updateModelUser);
         void DeleteUser(User deleteModelUser);
         void UpdateCUser(bool v);
+        Task<User> FindReferalAsync(string code);
+        Task FindReferalAsync(int referalID);
     }
 }

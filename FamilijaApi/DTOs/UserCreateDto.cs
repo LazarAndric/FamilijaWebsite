@@ -10,5 +10,7 @@ namespace FamilijaApi.DTOs
         public string PhoneNumber { get; set; }
         public int ReferralId { get; set; }
         public string ContractNumber { get; set; }
+        public string ReferralCode { get; set; }
+
     }
 }
