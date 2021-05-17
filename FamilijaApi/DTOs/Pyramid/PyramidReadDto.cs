@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace FamilijaApi.DTOs.Pyramid
 {
-    public class PyramidReadDto
+    public class PyramidTotalSpentDto
     {
         public int ReferalID { get; set; }
     }
