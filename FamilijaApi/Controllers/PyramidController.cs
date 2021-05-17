@@ -8,6 +8,7 @@ using FamilijaApi.DTOs.Pyramid;
 using FamilijaApi.DTOs.Requests;
 using FamilijaApi.Models;
 using FamilijaApi.Utility;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
@@ -27,14 +28,14 @@ namespace FamilijaApi.Controllers
         private JwtTokenUtility _jwtTokenUtil;
         private IUserRepo _userRepo;
         private IMapper _mapper;
-        private IPyramidRepo _pyramidRepo;
+        private IFinanceRepo _financeRepo;
 
-
-        public PyramidController(IAuthRepo authRepo, IPyramidRepo pyramidRepo, IRoleRepo roleRepo, IUserRepo userRepo, IMapper mapper, IOptionsMonitor<Jwtconfig> optionsMonitor, TokenValidationParameters tokenValidation)
+        public PyramidController(IAuthRepo authRepo, IRoleRepo roleRepo, IUserRepo userRepo, IMapper mapper, IFinanceRepo financeRepo, IOptionsMonitor<Jwtconfig> optionsMonitor, TokenValidationParameters tokenValidation)
         {
             _pyramidRepo = pyramidRepo;
             _mapper = mapper;
             _userRepo = userRepo;
+            _financeRepo = financeRepo;
             _jwtTokenUtil = new JwtTokenUtility(authRepo, userRepo, roleRepo, optionsMonitor.CurrentValue, tokenValidation);
         }
 
@@ -69,10 +70,6 @@ namespace FamilijaApi.Controllers
                         await _userRepo.SaveChangesAsync();
                         throw new Exception("Kvalifikovani Clan");
                     }
-
-                    throw new Exception("Niste kvalifikovani clan");
-
-
 
                     throw new Exception("Niste kvalifikovani clan");
                 }

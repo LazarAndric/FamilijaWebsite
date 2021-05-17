@@ -171,7 +171,7 @@ namespace FamilijaApi.Controllers
         }
 
         [HttpPut("mail/confirm")]
-        public async Task<IActionResult> UpdateConfirmedMail([FromHeader] string authorization, ConfirmedEmailDto confirmedMail)
+        public async Task<IActionResult> UpdateConfirmedMail([FromHeader] string authorization)
         {
             var auth=await _jwtTokenUtil.VerifyJwtToken(authorization);
             if(auth.Success){
@@ -180,9 +180,11 @@ namespace FamilijaApi.Controllers
                 {
                     return Ok();
                 }
-
+                ConfirmedEmailDto confirmedMail = new ConfirmedEmailDto()
+                {
+                    EmailConfirmed = true
+                };
                 _mapper.Map(confirmedMail, auth.User);
-                _userRepo.UpdateCUser(auth.User.EmailConfirmed = true);
                 await _userRepo.SaveChangesAsync();
                 return Ok();
             }
