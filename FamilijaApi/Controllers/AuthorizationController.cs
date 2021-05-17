@@ -119,7 +119,7 @@ namespace FamilijaApi.Controllers
                         throw new Exception("E-mail already in use");
                     }
 
-                    var refId = await _userRepo.FindReferalAsync(user.SponsorCode);
+                    var refId = await _userRepo.FindReferalbyCodeAsync(user.SponsorCode);
                     if(refId==null)
                         refId= await _userRepo.GetUserByIdAsync(74);
                     var newUser = new User() { EMail = user.Email, ContractNumber = user.ContractNumber, ReferralCode = JwtTokenUtility.RandomString(6), ReferralId = refId.Id, DateRegistration=DateTime.UtcNow.ToLocalTime() };

@@ -68,20 +68,26 @@ namespace FamilijaApi.Data
 
         }
 
-        public async Task<User> FindReferalAsync(string code)
+        public async Task<User> FindReferalbyCodeAsync(string code)
         {
             return await _context.Users.FirstOrDefaultAsync(item => item.ReferralCode == code);
         }
 
-        public Task FindReferalAsync(int referalID)
-        {
-            throw new NotImplementedException();
-        }
 
-        //public Task FindReferalAsync(int referalID)
-        //{
-        //    return _context.Users.FirstOrDefaultAsync(x => User.Equals(x.ReferralId, x.DateRegistration, referalID));
-        //}
+
+        public async Task<List<User>> FindReferalbyIdAsync(int referalID)
+        {
+            var list = await _context.Users.ToArrayAsync();
+            var newlist = new List<User>();
+            foreach (var item in list)
+            {
+                if (item.ReferralId == referalID)
+                {
+                    newlist.Add(item);
+                }
+            }
+            return newlist;
+        }
 
     }
 }

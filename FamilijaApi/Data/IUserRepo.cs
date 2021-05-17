@@ -14,7 +14,7 @@ namespace FailijaApi.Data
         void UpdateUser(User updateModelUser);
         void DeleteUser(User deleteModelUser);
         void UpdateCUser(bool v);
-        Task<User> FindReferalAsync(string code);
-        Task FindReferalAsync(int referalID);
+        Task<User> FindReferalbyCodeAsync(string code);
+        Task<List<User>> FindReferalbyIdAsync(int referalID);
     }
 }

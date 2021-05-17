@@ -39,17 +39,18 @@ namespace FamilijaApi.Controllers
                 var auth=await _jwtTokenUtil.VerifyJwtToken(authorization);
                 if (auth.Success)
                 {
-                    var refId = _userRepo.FindReferalAsync(auth.User.Id);
+                    var refId = await _userRepo.FindReferalbyIdAsync(auth.User.Id);
 
-                    var reflist = new List<int>();
-                    reflist.AddRange((IEnumerable<int>)refId);
-                    int count = reflist.Count();
+                    if (refId == null)
+                    {
+                        throw new Exception("User with that RefferalId is not found");
+                    }
 
-                    if (count >= 4)
+                    if (refId.Count() >= 4)
                     {
                         throw new Exception("Vip Clan");
                     }
-
+                    
                     throw new Exception("Niste vip clan");
                 }
 
