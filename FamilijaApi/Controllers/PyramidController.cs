@@ -83,6 +83,50 @@ namespace FamilijaApi.Controllers
 
         }
 
+        [HttpPut]
+        [AllowAnonymous]
+        public async Task<IActionResult> GetReferalByDate([FromHeader] string authorization)
+        {
+            try
+            {
+                var auth = await _jwtTokenUtil.VerifyJwtToken(authorization);
+                if (auth.Success)
+                {
+                    var refId = await _userRepo.FindReferalbyIdAsync(auth.User.Id);
+
+                    if (refId == null)
+                    {
+                        throw new Exception("User with that RefferalId is not found");
+                    }
+
+                    var sortref = from r in refId orderby r.DateRegistration select r;
+                    var myref = sortref.Take(1).ToList();
+                    myref.AddRange(sortref.Skip(2).Take(1));
+                    //myref.AddRange(sortref.Skip(4));
+                    
+                    //_mapper.Map(financeUpdateDto, );
+                    //_financeRepo.UpdateFinance(auth.);
+                    //await _financeRepo.SaveChanges();
+
+
+
+
+
+
+
+
+
+                }
+
+                return Unauthorized();
+            }
+            catch (System.Exception ex)
+            {
+                return Ok(ex.Message);
+            }
+
+        }
+
         [HttpPost]
         public async Task<IActionResult> UpdateTotalSpent([FromHeader] string authorization)
         {
