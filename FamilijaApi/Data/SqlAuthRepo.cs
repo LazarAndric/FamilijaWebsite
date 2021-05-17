@@ -23,13 +23,13 @@ namespace FamilijaApi.Data
         {
             return await _context.RefreshTokens.FirstOrDefaultAsync(x => x.Token.Equals(token));
         }
-        public async Task<RefreshToken> GetTokenByuserIdAsync(int id)
+        public async Task<RefreshToken> GetTokenByJtiAsync(string jti)
         {
-            return await _context.RefreshTokens.FirstOrDefaultAsync(x => x.UserId == id);
+            return await _context.RefreshTokens.FirstOrDefaultAsync(x => x.JwtId.Equals(jti));
         }
-        public async Task UpdateTokenAsync(int id, RefreshToken token)
+        public async Task UpdateTokenAsync(string jwtId, RefreshToken token)
         {
-            _context.Entry(await _context.RefreshTokens.FirstOrDefaultAsync(x => x.UserId == id)).CurrentValues.SetValues(token);
+            _context.Entry(await _context.RefreshTokens.FirstOrDefaultAsync(x => x.JwtId == jwtId)).CurrentValues.SetValues(token);
         }
 
 

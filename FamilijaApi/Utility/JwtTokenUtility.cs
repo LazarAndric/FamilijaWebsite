@@ -70,7 +70,7 @@ namespace FamilijaApi.Utility
                 JwtId= token.Id,
                 UserId= user.Id,
                 AddedDate= DateTime.UtcNow.ToLocalTime(),
-                ExpiryDate=DateTime.UtcNow.ToLocalTime().AddHours(1),
+                ExpiryDate=DateTime.UtcNow.ToLocalTime().AddSeconds(1),
                 Token=RandomString(35)+Guid.NewGuid()
             };
             return refreshToken;
@@ -154,12 +154,17 @@ namespace FamilijaApi.Utility
 
                 if(storedToken.ExpiryDate < DateTime.UtcNow.ToLocalTime())
                 {
-                    throw new Exception("Token is expiry");
+                    return new RefreshTokenValidate(){
+                        Success=false,
+                        Error="Token is expiry",
+                        JwtId=storedToken.JwtId
+                };
                 }
 
                 return new RefreshTokenValidate(){
                     Success=true,
-                    JwtId=storedToken.JwtId
+                    JwtId=storedToken.JwtId,
+                    RefreshToken=refreshToken
                 };
             }
             catch (Exception ex)

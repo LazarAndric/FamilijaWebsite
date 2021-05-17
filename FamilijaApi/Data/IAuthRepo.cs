@@ -8,8 +8,8 @@ namespace FamilijaApi.Data
         Task AddToDbAsync(RefreshToken refreshToken);
         Task SaveChangesAsync();
         Task<RefreshToken> GetTokenAsync(string token);
-        Task UpdateTokenAsync(int id, RefreshToken token);
+        Task UpdateTokenAsync(string jti, RefreshToken token);
         void DeleteToken(RefreshToken storedToken);
-        Task<RefreshToken> GetTokenByuserIdAsync(int id);
+        Task<RefreshToken> GetTokenByJtiAsync(string id);
     }
 }

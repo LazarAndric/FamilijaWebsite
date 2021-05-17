@@ -184,7 +184,7 @@ namespace FamilijaApi.Controllers
                 
                 if(authJwt.IsExpiry){
                     var newJwt = _jwtTokenUtil.GenerateJwtToken(authJwt.User, authJwt.Role, out string newJwtToken);
-                    await _authRepo.UpdateTokenAsync(authJwt.User.Id, newJwt);
+                    await _authRepo.UpdateTokenAsync(authJwt.JwtId, newJwt);
                     await _authRepo.SaveChangesAsync();
 
                     return Created("", true);
@@ -198,27 +198,18 @@ namespace FamilijaApi.Controllers
                         Success=  auth.Success,
                 });
             }
-            catch (System.Exception ex)
+            catch (System.Exception)
             {
-                return Ok(
-                    new AuthResult(){
-                        Errors= new List<string>(){
-                            ex.Message
-                            },
-                        Success=  false,
-                });
+                return await LogOut(authorizationRefresh);
             }
         }
 
         [HttpPost("logOut")]
-        public async Task<IActionResult> LogOut([FromHeader] string authorization){
+        public async Task<IActionResult> LogOut([FromHeader] string authorizationRefresh){
             try
             {
-                var auth= await _jwtTokenUtil.VerifyJwtToken(authorization);
-                if(!auth.Success){
-                    throw new Exception("Token doesn't exist");
-                }
-                var token= await _authRepo.GetTokenByuserIdAsync(auth.User.Id);
+                var auth= await _jwtTokenUtil.VerifyRefreshToken(authorizationRefresh);
+                var token= await _authRepo.GetTokenByJtiAsync(auth.JwtId);
                 _authRepo.DeleteToken(token);
                 await _authRepo.SaveChangesAsync();
                 
