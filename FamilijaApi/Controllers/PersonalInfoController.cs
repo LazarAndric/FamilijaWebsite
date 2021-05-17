@@ -35,56 +35,90 @@ namespace FamilijaApi.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetPersonalInfo([FromBody]TokenRequest token)
+        public async Task<IActionResult> GetPersonalInfo([FromHeader] string authorization)
         {
-            var auth=await _jwtTokenUtil.VerifyAndGenerateToken(token);
-            var finalAuth= _mapper.Map<AuthResult>(auth);
-            if(auth.Success){
-                var content = await _personalInfoRepo.GetPersonalInfo(auth.Id);
-                if (content == null) return NoContent();
-                return Ok(new CommunicationModel<PersonalInfoReadDto>(){
-                    AuthResult=finalAuth,
-                    GenericModel=  _mapper.Map<PersonalInfoReadDto>(content)
+            try
+            {
+                var auth=await _jwtTokenUtil.VerifyJwtToken(authorization);
+                if(auth.Success){
+                    var content = await _personalInfoRepo.GetPersonalInfoAsync(auth.User.Id);
+                    if (content == null)
+                        return NotFound("Personal info of user is not found");
+                    return Ok(new CommunicationModel<PersonalInfoReadDto>(){
+                        GenericModel=_mapper.Map<PersonalInfoReadDto>(content),
+                        Result=new AuthResult(){
+                            Success=true
+                        }
+                    });
+                }
+                return Unauthorized();
+            }
+            catch (System.Exception ex)
+            {
+                return Unauthorized(new AuthResult(){
+                    Errors=new List<string>(){
+                        ex.Message
+                    },
+                    Success=false
                 });
             }
-            return Unauthorized(finalAuth);
+            
         }
 
         [HttpPut]
-        public async Task<IActionResult> UpdatePersonalInfo([FromBody] GetCommunicationModel<PersonalInfoUpdateDtos> data)
+        public async Task<IActionResult> UpdatePersonalInfo([FromHeader] string authorization, [FromBody] PersonalInfoUpdateDtos infoUpdateDtos)
         {
-            var auth=await _jwtTokenUtil.VerifyAndGenerateToken(data.TokenRequest);
-            var finalAuth= _mapper.Map<AuthResult>(auth);
-            if(auth.Success){
-                var updateModelPersonalInfo = await _personalInfoRepo.GetPersonalInfo(auth.Id);
-                if (updateModelPersonalInfo == null)
-                {
-                    return NotFound(finalAuth);
+            try
+            {
+                var auth=await _jwtTokenUtil.VerifyJwtToken(authorization);
+                if(auth.Success){
+                    var updateModelPersonalInfo = await _personalInfoRepo.GetPersonalInfoAsync(auth.User.Id);
+                    if (updateModelPersonalInfo == null)
+                    {
+                        return NotFound(new AuthResult(){
+                            Success=false,
+                            Errors=new List<string>(){
+                                "Personal info of user is not found"
+                                }
+                        });
+                    }
+                    _mapper.Map(infoUpdateDtos, updateModelPersonalInfo);
+                    _personalInfoRepo.UpdatePersonalInfo(updateModelPersonalInfo);
+                    await _personalInfoRepo.SaveChanges();
+                    return Ok(new AuthResult(){
+                            Success=true
+                        });
                 }
-                _mapper.Map(data.GenericModel, updateModelPersonalInfo);
-                _personalInfoRepo.UpdatePersonalInfo(updateModelPersonalInfo);
-                await _personalInfoRepo.SaveChanges();
-                return Ok(finalAuth);
+                throw new Exception("User is Unauthorize");
             }
-            return Unauthorized(finalAuth);
+            catch (System.Exception ex)
+            {
+                return Unauthorized(new AuthResult(){
+                    Success=false,
+                    Errors=new List<string>(){
+                        ex.Message
+                    }
+                });
+            }
+            
         }
 
-        [HttpDelete]
-        public async Task<IActionResult> DeletePersonalInfo([FromBody]TokenRequest token)
-        {
-            var auth=await _jwtTokenUtil.VerifyAndGenerateToken(token);
-            var finalAuth= _mapper.Map<AuthResult>(auth);
-            if(auth.Success){
-                var deleteModelPersonalInfo = await _personalInfoRepo.GetPersonalInfo(auth.Id);
-                if (deleteModelPersonalInfo == null)
-                {
-                    return NotFound(finalAuth);
-                }
-                _personalInfoRepo.DeletePersonalInfo(deleteModelPersonalInfo);
-                await _personalInfoRepo.SaveChanges();
-                return Ok(finalAuth);
-            }
-            return Unauthorized(finalAuth);
-        }
+        // [HttpDelete]
+        // public async Task<IActionResult> DeletePersonalInfo([FromBody]TokenRequest token)
+        // {
+        //     var auth=await _jwtTokenUtil.VerifyAndGenerateToken(token);
+        //     var finalAuth= _mapper.Map<AuthResult>(auth);
+        //     if(auth.Success){
+        //         var deleteModelPersonalInfo = await _personalInfoRepo.GetPersonalInfo(auth.Id);
+        //         if (deleteModelPersonalInfo == null)
+        //         {
+        //             return NotFound(finalAuth);
+        //         }
+        //         _personalInfoRepo.DeletePersonalInfo(deleteModelPersonalInfo);
+        //         await _personalInfoRepo.SaveChanges();
+        //         return Ok(finalAuth);
+        //     }
+        //     return Unauthorized();
+        // }
     }
 }

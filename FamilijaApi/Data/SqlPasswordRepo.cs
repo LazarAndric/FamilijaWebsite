@@ -17,7 +17,7 @@ namespace FamilijaApi.Data
             _context = context;
         }
 
-        public async Task CreatePassword(Password password)
+        public async Task CreatePasswordAsync(Password password)
         {
             await _context.Passwords.AddAsync(password);
         }
@@ -31,12 +31,12 @@ namespace FamilijaApi.Data
             _context.Passwords.Remove(deleteModelPassword);
         }
 
-        public async Task<Password> GetPassword(int userId)
+        public async Task<Password> GetPasswordAsync(int userId)
         {
             return await _context.Passwords.FirstOrDefaultAsync(item => item.UserId == userId);
         }
 
-        public async Task<bool> SaveChanges()
+        public async Task<bool> SaveChangesAsync()
         {
             return (await _context.SaveChangesAsync() >= 0);
         }

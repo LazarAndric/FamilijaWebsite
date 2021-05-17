@@ -76,74 +76,98 @@ namespace FamilijaApi.Utility
             return refreshToken;
         }
 
-        
-        public async Task<AuthCreate> VerifyAndGenerateToken(TokenRequest tokenRequest)
-        {
-            var jwtTokentHandler= new JwtSecurityTokenHandler();
+        public static bool IsIdValid(string storedJti, string jti){
+            return storedJti.Equals(jti);
+        }
 
+        public async Task<JwtTokenValidate> VerifyJwtToken(string jwtToken){
             try
             {
-                //Validation 1 - validate jwt token format
-                var tokenInVerification = jwtTokentHandler.ValidateToken(tokenRequest.Token, _tokenValidation, out var validatedToken);
+                jwtToken= jwtToken.Remove(0, 7);
+                var jwtTokentHandler= new JwtSecurityTokenHandler();
+
+                var tokenInVerification = jwtTokentHandler.ValidateToken(jwtToken, _tokenValidation, out var validatedToken);
                 
-                //Validation 2 - validate encryption alg
                 if(validatedToken is JwtSecurityToken jwtSecurityToken){
                     var result= jwtSecurityToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha512, StringComparison.InvariantCultureIgnoreCase);
 
                     if(!result)
-                        return null;
-                }
+                        throw new Exception("Algorithm not validate");
 
-                //Validation 3 - Stored
-                var storedToken = await _authRepo.GetToken(tokenRequest.RefreshToken);
-                if (storedToken == null)
-                    return Result(false, "Token does not exist");
+                    var utcExpiryDate= long.Parse(tokenInVerification.Claims.FirstOrDefault(x=>x.Type==JwtRegisteredClaimNames.Exp).Value);
 
-                //Validation 4 - Token match
-                var jti = tokenInVerification.Claims.FirstOrDefault(x=>x.Type== JwtRegisteredClaimNames.Jti).Value;
-                if(storedToken.JwtId != jti)
-                {
-                    return Result(false, "Token doesn't match");
-                }
-                var role = tokenInVerification.Claims.FirstOrDefault(x=>x.Type== ClaimsIdentity.DefaultRoleClaimType).Value;
-                //Validation 4 - Expiry
-                var utcExpiryDate= long.Parse(tokenInVerification.Claims.FirstOrDefault(x=>x.Type==JwtRegisteredClaimNames.Exp).Value);
-                var expiryDate = UnixTimeStampToDateTime(utcExpiryDate);
-                var curDate= DateTime.UtcNow.ToLocalTime();
-                var auth=new AuthCreate();
-                if(expiryDate> curDate)
-                {
-                    auth= new AuthCreate(){
-                        Id=Int32.Parse(tokenInVerification.Identity.Name),
-                        Token=tokenRequest.Token,
-                        RefreshToken=tokenRequest.RefreshToken,
-                        Success=true
-                    };                    
-                }
-                else
-                {
-                    var user = await _userRepo.GetUserByIdAsync(int.Parse(tokenInVerification.Identity.Name));
+                    var id = int.Parse(tokenInVerification.Identity.Name);
+                    var user= await _userRepo.GetUserByIdAsync(id);
                     if(user==null)
-                        return Result(false, "Token name identifier it's not work");
+                        throw new Exception("User not found");
+
+                    var role = tokenInVerification.Claims.FirstOrDefault(x=>x.Type== ClaimsIdentity.DefaultRoleClaimType).Value;
                     var userRole= await _roleRepo.GetRole(user.Id);
-                    if(userRole==null)
-                        return Result(false, "Role is not founded");
-                    var existRole= await _roleRepo.GetRoleByRoleNamed(role);
-                    var token= GenerateJwtToken(user, existRole, out var jwtToken);
-                    await _authRepo.UpdateTokenAsync(user.Id, token);
-                    await _authRepo.SaveChangesAsync();
-                    auth= new AuthCreate(){
-                        Id=userRole.Id,
-                        Token= jwtToken,
+                    var usrRole = await _roleRepo.GetRoleByRoleId(userRole.RoleId);
+
+                    if(usrRole.Value!=role){
+                        throw new Exception("User is not same");
+                    }
+
+                    var jti= tokenInVerification.Claims.FirstOrDefault(x=>x.Type== JwtRegisteredClaimNames.Jti).Value;
+
+                    var dateTime= long.Parse(tokenInVerification.Claims.FirstOrDefault(x=>x.Type== JwtRegisteredClaimNames.Exp).Value);
+                    if(UnixTimeStampToDateTime(dateTime) < DateTime.UtcNow.ToLocalTime())
+                        return new JwtTokenValidate(){
+                            User=user,
+                            Role=usrRole,
+                            Success=true,
+                            IsExpiry=true,
+                            JwtId=jti
+                        };
+                        
+                    return new JwtTokenValidate(){
+                        User=user,
+                        Role=usrRole,
+                        IsExpiry=false,
                         Success=true,
-                        RefreshToken=storedToken.Token
+                        JwtId=jti
                     };
                 }
-                return auth;
+                throw new Exception("Token is not validate");
+            }
+            catch (System.Exception ex)
+            {
+                return new JwtTokenValidate(){
+                    IsExpiry=false,
+                    Success=false,
+                    Error=ex.Message
+                };
+            }
+            
+        }
+        
+        public async Task<RefreshTokenValidate> VerifyRefreshToken(string refreshToken)
+        {
+            try
+            {
+                var storedToken = await _authRepo.GetTokenAsync(refreshToken);
+                if (storedToken == null)
+                {
+                    throw new Exception("Token does not exist");
+                }
+
+                if(storedToken.ExpiryDate < DateTime.UtcNow.ToLocalTime())
+                {
+                    throw new Exception("Token is expiry");
+                }
+
+                return new RefreshTokenValidate(){
+                    Success=true,
+                    JwtId=storedToken.JwtId
+                };
             }
             catch (Exception ex)
             {
-                return Result(false, ex.Message);
+                return new RefreshTokenValidate(){
+                       Success=false,
+                       Error=ex.Message
+                };
             }
         }
 
@@ -160,23 +184,6 @@ namespace FamilijaApi.Utility
             var dateTime = new DateTime(1970, 1,1,0,0,0,0, DateTimeKind.Utc);
             dateTime= dateTime.AddSeconds(unixTimeStamp).ToLocalTime();
             return dateTime;
-        }
-        
-        public static AuthCreate Result(bool isSucess, string message){
-            return new AuthCreate(){
-                    Success=isSucess,
-                    Errors=new List<string>(){
-                        message
-                    }
-                };
-        }
-        public static AuthResult ResultPW(bool isSucess, string message){
-            return new AuthResult(){
-                    Success=isSucess,
-                    Errors=new List<string>(){
-                        message
-                    }
-                };
         }
     }
 }

@@ -31,7 +31,7 @@ namespace FamilijaApi.Data
 
         }
 
-        public async Task<PersonalInfo> GetPersonalInfo(int id)
+        public async Task<PersonalInfo> GetPersonalInfoAsync(int id)
         {
             return await _context.PersonalInfo.FirstOrDefaultAsync(item => item.UserId == id);
         }

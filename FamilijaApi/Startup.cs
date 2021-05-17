@@ -86,7 +86,7 @@ namespace FamilijaApi
                 ValidateIssuerSigningKey= true,
                 IssuerSigningKey= new SymmetricSecurityKey(key),
                 RequireSignedTokens=true,
-                ClockSkew=TimeSpan.FromMinutes(2),
+                ClockSkew=TimeSpan.Zero,
                 ValidateIssuer= false,
                 ValidateAudience=false,
                 ValidateLifetime=false,
@@ -116,8 +116,6 @@ namespace FamilijaApi
             services.AddScoped<IUserRepo, SqlUserRepo>();
             services.AddScoped<IRoleRepo, SqlRoleRepo>();
             services.AddScoped<IAuthRepo, SqlAuthRepo>();
-            
-
             services.AddScoped<IAdddressesRepo, SqlAddressRepo>();
             services.AddScoped<IFinanceRepo, SqlFinanceRepo>();
             services.AddScoped<IPersonalInfoRepo, SqlPersonalInfoRepo>();

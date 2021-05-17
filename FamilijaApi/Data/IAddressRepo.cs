@@ -6,7 +6,7 @@ namespace FailijaApi.Data
 {
     public interface IAdddressesRepo
     {
-         Task<Address> GetAddress(int id);
+         Task<Address> GetAddressAsync(int userId);
         void CreateAddress(Address addres);
         Task<bool> SaveChanges();
         void UpdateAddress(Address updateModelAddress);

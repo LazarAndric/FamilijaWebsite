@@ -9,8 +9,8 @@ namespace FamilijaApi.Profiles
     public class ProfileMaps : Profile
     {
         public ProfileMaps(){
-            CreateMap<AuthCreate, AuthResult>();
-            CreateMap<AuthResult, AuthCreate>();
+            CreateMap<AuthTokenCreate, AuthResult>();
+            CreateMap<AuthResult, AuthTokenCreate>();
 
             CreateMap<User, UserReadDto>();
             CreateMap<UserCreateDto, User>();

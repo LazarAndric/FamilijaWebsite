@@ -8,9 +8,9 @@ namespace FamilijaApi.Data
 {
     public interface IPasswordRepo
     {
-        Task<Password> GetPassword(int id);
-        Task CreatePassword(Password password);
-        Task<bool> SaveChanges();
+        Task<Password> GetPasswordAsync(int id);
+        Task CreatePasswordAsync(Password password);
+        Task<bool> SaveChangesAsync();
         void UpdatePassword(Password updateModelPassword);
         void DeletePassword(Password deleteModelPassword);
     }

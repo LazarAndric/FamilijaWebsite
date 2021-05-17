@@ -19,9 +19,13 @@ namespace FamilijaApi.Data
 
         }
 
-        public async Task<RefreshToken> GetToken(string token)
+        public async Task<RefreshToken> GetTokenAsync(string token)
         {
             return await _context.RefreshTokens.FirstOrDefaultAsync(x => x.Token.Equals(token));
+        }
+        public async Task<RefreshToken> GetTokenByuserIdAsync(int id)
+        {
+            return await _context.RefreshTokens.FirstOrDefaultAsync(x => x.UserId == id);
         }
         public async Task UpdateTokenAsync(int id, RefreshToken token)
         {

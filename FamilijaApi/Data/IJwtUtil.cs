@@ -10,6 +10,7 @@ namespace FamilijaApi.Data
     public interface IJwtUtil
     {
         public RefreshToken GenerateJwtToken(User user, Role role, out string jwtToken);
-        public Task<AuthCreate> VerifyAndGenerateToken(TokenRequest tokenRequest);
+        public Task<RefreshTokenValidate> VerifyRefreshToken(string refreshToken);
+        Task<JwtTokenValidate> VerifyJwtToken(string jwtToken);
     }
 }

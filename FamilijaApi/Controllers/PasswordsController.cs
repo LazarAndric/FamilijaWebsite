@@ -32,38 +32,44 @@ namespace FamilijaApi.Controllers
         }
 
         [HttpPut]
-        public async Task<ActionResult<PasswordReadDto>> ChangePassword([FromBody] GetCommunicationModel<PasswordChangeRequest> data)
+        public async Task<ActionResult<PasswordReadDto>> ChangePassword([FromHeader] string authorize, PasswordChangeRequest passwordModel)
         {
-            var auth=await _jwtTokenUtil.VerifyAndGenerateToken(data.TokenRequest);
-            var finalAuth= _mapper.Map<AuthResult>(auth);
-            if(auth.Success){
-                if(!PasswordUtility.ValidatePassword(data.GenericModel.NewPassword, out string msg))
-                {
-                    BadRequest(JwtTokenUtility.ResultPW(false, msg));
+            try
+            {
+                var auth=await _jwtTokenUtil.VerifyJwtToken(authorize);
+                if(auth.Success){
+                    if(!PasswordUtility.ValidatePassword(passwordModel.NewPassword, out string msg))
+                    {
+                        throw new System.Exception();
+                    }
+                    if(!passwordModel.NewPassword.Equals(passwordModel.ConfirmPassword))
+                    {
+                        throw new System.Exception();
+                    }
+                    var currentHashedPass=await _passwordRepo.GetPasswordAsync(auth.User.Id);
+                    var currentPass= PasswordUtility.VerifyPassword(passwordModel.CurrentPassword, currentHashedPass.Hash, currentHashedPass.Salt);
+                    if(!currentPass){
+                        throw new System.Exception();
+                    }
+                    var newPass=PasswordUtility.GenerateSaltedHash(10, passwordModel.NewPassword);
+                    newPass.Id=auth.User.Id;
+                    try
+                    {
+                        await _passwordRepo.CreatePasswordAsync(newPass);
+                        await _passwordRepo.SaveChangesAsync();
+                        throw new System.Exception();
+                    }
+                    catch (System.Exception)
+                    {
+                        throw new System.Exception();
+                    }
                 }
-                if(!data.GenericModel.NewPassword.Equals(data.GenericModel.ConfirmPassword))
-                {
-                    BadRequest(JwtTokenUtility.ResultPW(false, "Your confirm password is not same"));
-                }
-                var currentHashedPass=await _passwordRepo.GetPassword(auth.Id);
-                var currentPass= PasswordUtility.VerifyPassword(data.GenericModel.CurrentPassword, currentHashedPass.Hash, currentHashedPass.Salt);
-                if(!currentPass){
-                    BadRequest(JwtTokenUtility.ResultPW(false, "Your password is not correct"));
-                }
-                var newPass=PasswordUtility.GenerateSaltedHash(10, data.GenericModel.NewPassword);
-                newPass.Id=auth.Id;
-                try
-                {
-                    await _passwordRepo.CreatePassword(newPass);
-                    await _passwordRepo.SaveChanges();
-                    return Created("", JwtTokenUtility.ResultPW(true, "User is created"));
-                }
-                catch (System.Exception)
-                {
-                    return BadRequest(JwtTokenUtility.ResultPW(false,"Can't create password"));
-                }
+                throw new System.Exception();
             }
-            return Unauthorized(finalAuth);
+            catch (System.Exception)
+            {
+                return Unauthorized();
+            }
         }
 
 

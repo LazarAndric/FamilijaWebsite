@@ -29,9 +29,9 @@ namespace FamilijaApi.Data
             _context.Addresses.Remove(deleteModelAddress);
         }
 
-        public async Task<Address> GetAddress(int id)
+        public async Task<Address> GetAddressAsync(int userId)
         {
-            return await _context.Addresses.FirstOrDefaultAsync(item => item.UserId == id);
+            return await _context.Addresses.FirstOrDefaultAsync(item => item.UserId == userId);
         }
 
         public async Task<bool> SaveChanges()

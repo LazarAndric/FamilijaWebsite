@@ -12,6 +12,7 @@ using FamilijaApi.Configuration;
 using Microsoft.Extensions.Options;
 using FamilijaApi.Data;
 using Microsoft.IdentityModel.Tokens;
+using System.Collections.Generic;
 
 namespace FamilijaApi.Controllers
 {
@@ -32,20 +33,29 @@ namespace FamilijaApi.Controllers
         }
         
         [HttpGet]
-        public async Task<IActionResult> GetAddress([FromBody] TokenRequest token)
+        public async Task<IActionResult> GetAddress([FromHeader] string authorization)
         {
-            var auth=await _jwtTokenUtil.VerifyAndGenerateToken(token);
-            var finalAuth= _mapper.Map<AuthResult>(auth);
-            if(auth.Success){            
-                var content = await _addressRepo.GetAddress(auth.Id);
-                if (content == null) 
-                    return NotFound(finalAuth);
-                return Ok(new CommunicationModel<AddressReadDto>(){
-                    GenericModel=_mapper.Map<AddressReadDto>(content),
-                    AuthResult=finalAuth
-                });
+            try
+            {
+                var auth=await _jwtTokenUtil.VerifyJwtToken(authorization);
+                if(auth.Success){            
+                    var content = await _addressRepo.GetAddressAsync(auth.User.Id);
+                    if (content == null) 
+                        return NotFound("User not found");
+                    return Ok(new CommunicationModel<AddressReadDto>(){
+                        Result= new AuthResult(){
+                            Success=true
+                        },
+                        GenericModel=_mapper.Map<AddressReadDto>(content)
+                    });
+                }
+                throw new System.Exception("User is Unauthorize");
             }
-            return Unauthorized(finalAuth);
+            catch (System.Exception ex)
+            {
+                return Unauthorized(ex.Message);
+            }
+
         }
 
         //[HttpPost]
@@ -59,46 +69,66 @@ namespace FamilijaApi.Controllers
         //}
 
         [HttpPut]
-        public async Task<IActionResult> UpdateAddress([FromBody] GetCommunicationModel<AddressUpdateDto> data)
+        public async Task<IActionResult> UpdateAddress([FromHeader] string authorization,[FromBody] AddressUpdateDto address)
         {
-            var auth=await _jwtTokenUtil.VerifyAndGenerateToken(data.TokenRequest);
-            var finalAuth= _mapper.Map<AuthResult>(auth);
-            if(auth.Success){ 
-                var updateModelAddress = _addressRepo.GetAddress(auth.Id).Result;
-                if (updateModelAddress == null)
-                {
-                    finalAuth.Errors.Add("Addres is not found");
-                    return NotFound(finalAuth);
+            try
+            {
+                var auth=await _jwtTokenUtil.VerifyJwtToken(authorization);
+                if(auth.Success){ 
+                    var updateModelAddress = await _addressRepo.GetAddressAsync(auth.User.Id);
+                    if (updateModelAddress == null)
+                    {
+                        return NotFound("User is not found");
+                    }
+                    _mapper.Map(address, updateModelAddress);
+                    _addressRepo.UpdateAddress(updateModelAddress);
+                    await _addressRepo.SaveChanges();
+                    return Ok(new AuthResult(){
+                        Success=true
+                    });
                 }
-                _mapper.Map(data.GenericModel, updateModelAddress);
-                _addressRepo.UpdateAddress(updateModelAddress);
-                await _addressRepo.SaveChanges();
-                return Ok(finalAuth);
+                throw new System.Exception("Unauthorize user");
             }
-            finalAuth.Errors.Add("Unauthorized");
-            return Unauthorized();
+            catch (System.Exception ex)
+            {
+                return Ok(new AuthResult(){
+                        Success=false,
+                        Errors=new List<string>(){
+                            ex.Message
+                        }
+                    });
+            }
+
 
 
         }
 
-        [HttpDelete]
-        public async Task<ActionResult> DeleteAddress([FromBody] TokenRequest token)
-        {
-            var auth=await _jwtTokenUtil.VerifyAndGenerateToken(token);
-            var finalAuth= _mapper.Map<AuthResult>(auth);
-            if(auth.Success){
-                var deleteModelAddress = _addressRepo.GetAddress(auth.Id).Result;
-                if (deleteModelAddress == null)
-                {
-                    finalAuth.Errors.Add("User not found");
-                    return NotFound(finalAuth);
-                }
-                _addressRepo.DeleteAdress(deleteModelAddress);
-                await _addressRepo.SaveChanges();
-                return NoContent();
-            }
-            finalAuth.Errors.Add("Unauthorized");
-            return Unauthorized();
-        }
+        // [HttpDelete]
+        // public async Task<ActionResult> DeleteAddress([FromHeader] string authorization)
+        // {
+        //     try
+        //     {
+        //         var auth=await _jwtTokenUtil.VerifyJwtToken(authorization);
+        //         if(auth.Success){
+        //             var deleteModelAddress = _addressRepo.GetAddressAsync(auth.Id).Result;
+        //             if (deleteModelAddress == null)
+        //             {
+        //                 finalAuth.Errors.Add("User not found");
+        //                 return NotFound(finalAuth);
+        //             }
+        //             _addressRepo.DeleteAdress(deleteModelAddress);
+        //             await _addressRepo.SaveChanges();
+        //             return NoContent();
+        //         }
+        //         finalAuth.Errors.Add("Unauthorized");
+        //         return Unauthorized();
+        //     }
+        //     catch (System.Exception)
+        //     {
+                
+        //         throw;
+        //     }
+            
+        // }
     }
 }

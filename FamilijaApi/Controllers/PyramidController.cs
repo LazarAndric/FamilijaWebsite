@@ -32,27 +32,34 @@ namespace FamilijaApi.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetByReferal(TokenRequest token)
+        public async Task<IActionResult> GetByReferal([FromHeader] string authorization)
         {
-             var auth=await _jwtTokenUtil.VerifyAndGenerateToken(token);
-            if (auth.Success)
+            try
             {
-                var refId = _userRepo.FindReferalAsync(auth.Id);
-
-                var reflist = new List<int>();
-                reflist.AddRange((IEnumerable<int>)refId);
-                int count = reflist.Count();
-
-                if (count >= 4)
+                var auth=await _jwtTokenUtil.VerifyJwtToken(authorization);
+                if (auth.Success)
                 {
-                    return Ok("VIP clan");
+                    var refId = _userRepo.FindReferalAsync(auth.User.Id);
 
+                    var reflist = new List<int>();
+                    reflist.AddRange((IEnumerable<int>)refId);
+                    int count = reflist.Count();
+
+                    if (count >= 4)
+                    {
+                        throw new Exception("Vip Clan");
+                    }
+
+                    throw new Exception("Niste vip clan");
                 }
 
-                return Ok("Niste vip clan");
+                return Unauthorized();
             }
-
-            return Unauthorized();
+            catch (System.Exception ex)
+            {
+                return Ok(ex.Message);
+            }
+            
         }
 
     }

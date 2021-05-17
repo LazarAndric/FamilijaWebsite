@@ -30,7 +30,7 @@ namespace FamilijaApi.Controllers
     [Authorize(AuthenticationSchemes= JwtBearerDefaults.AuthenticationScheme)]
     public class AuthorizationsController : ControllerBase
     {
-        private AuthResult _result;
+        private IMapper _mapper;
         private readonly IRoleRepo _roleRepo;
         private readonly IAuthRepo _authRepo;
         private readonly IUserRepo _userRepo;
@@ -38,6 +38,7 @@ namespace FamilijaApi.Controllers
         private readonly JwtTokenUtility _jwtTokenUtil;
 
         public AuthorizationsController(
+            IMapper mapper,
             IPasswordRepo passwordRepo, 
             IRoleRepo roleRepo, 
             TokenValidationParameters tokenValidation,
@@ -46,6 +47,7 @@ namespace FamilijaApi.Controllers
             IOptionsMonitor<Jwtconfig> optionsMonitor
             )
         {
+            _mapper=mapper;
             _passwordRepo = passwordRepo;
             _roleRepo = roleRepo;
             _authRepo = authRepo;
@@ -56,107 +58,184 @@ namespace FamilijaApi.Controllers
         [HttpPost("logIn")]
         [AllowAnonymous]
         public async Task<IActionResult> Login([FromBody] UserLoginRequest user) {
-            if (ModelState.IsValid) {
-                var existingUser = new User();
-                if (MailAddress.TryCreate(user.Username, out var mail))
-                    existingUser = await _userRepo.FindByEmailAsync(mail.Address);
-                if (existingUser == null)
-                {
-                    _result = JwtTokenUtility.ResultPW(false, "Invalid username");
-                    return BadRequest(_result);
+            try
+            {
+                if (ModelState.IsValid) {
+                    var existingUser = new User();
+                    if (MailAddress.TryCreate(user.Username, out var mail))
+                        existingUser = await _userRepo.FindByEmailAsync(mail.Address);
+                    if (existingUser == null)
+                    {
+                        throw new Exception("Your e-mail or password is wrong");
+                    }
+                    var pass = await _passwordRepo.GetPasswordAsync(existingUser.Id);
+                    var isCorrect = PasswordUtility.VerifyPassword(user.Password, pass.Hash, pass.Salt);
+
+                    if (!isCorrect)
+                    {
+                        throw new Exception("Your e-mail or password is wrong");
+                    }
+
+                    var existRole = await _roleRepo.GetRole(existingUser.Id);
+                    var role = await _roleRepo.GetRoleByRoleId(existRole.RoleId);
+                    var token = _jwtTokenUtil.GenerateJwtToken(existingUser, role, out var jwtToken);
+
+                    await _authRepo.AddToDbAsync(token);
+                    await _authRepo.SaveChangesAsync();
+
+                    return Ok(new CommunicationModel {
+                        Result=new AuthResult(){
+                            Success=true
+                        },
+                        CreateToken= new AuthTokenCreate(){
+                            RefreshToken=token.Token,
+                            JwtToken=jwtToken
+                        }
+                    });
                 }
-                var pass = await _passwordRepo.GetPassword(existingUser.Id);
-                var isCorrect = PasswordUtility.VerifyPassword(user.Password, pass.Hash, pass.Salt);
-
-                if (!isCorrect)
-                {
-                    _result = JwtTokenUtility.ResultPW(false, "Invalid password");
-                    return BadRequest(_result);
-                }
-
-                var existRole = await _roleRepo.GetRole(existingUser.Id);
-                if (existingUser == null) {
-                    _result = JwtTokenUtility.ResultPW(false, "Invalid login request");
-                    return BadRequest(_result);
-                }
-                var role = await _roleRepo.GetRoleByRoleId(existRole.RoleId);
-
-                var token = _jwtTokenUtil.GenerateJwtToken(existingUser, role, out var jwtToken);
-
-                await _authRepo.AddToDbAsync(token);
-                await _authRepo.SaveChangesAsync();
-
-                return Ok(new CommunicationModel<User>() {
-                    AuthResult = new AuthResult() {
-                        Token = jwtToken,
-                        RefreshToken = token.Token
+                return NoContent();
+            }
+            catch (System.Exception ex)
+            {
+                return BadRequest(new AuthResult(){
+                    Errors=new List<string>(){
+                        ex.Message
                     },
-                    GenericModel = existingUser
+                    Success=false
                 });
             }
-            var result = JwtTokenUtility.ResultPW(false, "Invalid payload");
-            return BadRequest(result);
         }
         
         [HttpPost("registration")]
         [AllowAnonymous]
         public async Task<IActionResult> Register([FromBody] UserRegistrationDto user)
         {
-            if(ModelState.IsValid)
+            try
             {
-                var existing = await _userRepo.FindByEmailAsync(user.Email);
-                if(existing!=null){
-                    _result=JwtTokenUtility.Result(false,"Email already in use");
-                    return BadRequest(_result);
-                }
-
-
-                var refId = await _userRepo.FindReferalAsync(user.SponsorCode);
-                var newUser = new User() { EMail = user.Email, ContractNumber = user.ContractNumber, ReferralCode = JwtTokenUtility.RandomString(6), ReferralId = refId.Id, DateRegistration=DateTime.UtcNow.ToLocalTime() };
-                var isValid=PasswordUtility.ValidatePassword(user.Password, out var message);
-                if(!isValid)
+                if(ModelState.IsValid)
                 {
-                    _result=JwtTokenUtility.Result(false,message);
-                    return BadRequest(_result);
-                }
+                    var existing = await _userRepo.FindByEmailAsync(user.Email);
+                    if(existing!=null){
+                        throw new Exception("E-mail already in use");
+                    }
 
-                var isCreated= await _userRepo.CreateUserAsync(newUser);
-                await _userRepo.SaveChangesAsync();
-                
-                var existRole=await _roleRepo.GetRoleByRoleNamed("admin");
-                UserRole role= new UserRole(){UserId=newUser.Id,RoleId=existRole.Id};
-                
-                await _roleRepo.CreateRole(role);
-                var token = _jwtTokenUtil.GenerateJwtToken(newUser, existRole, out var jwtToken);
-                await _authRepo.AddToDbAsync(token);
-                await _authRepo.SaveChangesAsync();
-                var pw=PasswordUtility.GenerateSaltedHash(10, user.Password);
-                pw.UserId=newUser.Id;
-                
-                await _passwordRepo.CreatePassword(pw);
-                await _passwordRepo.SaveChanges();
-                return Ok(new CommunicationModel<User>(){
-                    AuthResult= new AuthResult(){
-                        Token=jwtToken,
-                        RefreshToken=token.Token,
-                        Success=true
-                        },
-                    GenericModel= newUser
+                    var refId = await _userRepo.FindReferalAsync(user.SponsorCode);
+                    if(refId==null)
+                        refId= await _userRepo.GetUserByIdAsync(74);
+                    var newUser = new User() { EMail = user.Email, ContractNumber = user.ContractNumber, ReferralCode = JwtTokenUtility.RandomString(6), ReferralId = refId.Id, DateRegistration=DateTime.UtcNow.ToLocalTime() };
+                    var isValid=PasswordUtility.ValidatePassword(user.Password, out var message);
+                    if(!isValid)
+                    {
+                        throw new Exception(message);
+                    }
+
+                    var isCreated= await _userRepo.CreateUserAsync(newUser);
+                    await _userRepo.SaveChangesAsync();
+                    
+                    var existRole=await _roleRepo.GetRoleByRoleNamed("admin");
+                    UserRole role= new UserRole(){UserId=newUser.Id,RoleId=existRole.Id};
+                    
+                    await _roleRepo.CreateRole(role);
+                    var token = _jwtTokenUtil.GenerateJwtToken(newUser, existRole, out var jwtToken);
+                    await _authRepo.AddToDbAsync(token);
+                    await _authRepo.SaveChangesAsync();
+                    var pw=PasswordUtility.GenerateSaltedHash(10, user.Password);
+                    pw.UserId=newUser.Id;
+                    await _passwordRepo.CreatePasswordAsync(pw);
+                    await _passwordRepo.SaveChangesAsync();
+                    return Ok(new CommunicationModel(){
+                        CreateToken= new AuthTokenCreate(){
+                            JwtToken=jwtToken,
+                            RefreshToken=token.Token
+                            },
+                        Result= new AuthResult(){
+                            Success=true
+                        }
+                    });
+                }
+                return NoContent();
+            }
+            catch (System.Exception ex)
+            {
+                return NotFound(new AuthResult(){
+                    Success=false,
+                    Errors=new List<string>(){
+                        ex.Message
+                        }
                 });
             }
+            
+        }
 
-            _result=JwtTokenUtility.Result(false,"Invalid payload");
-            return BadRequest(_result);
+        [HttpPost("VerifyToken")]
+        public async Task<IActionResult> VerifyToken([FromHeader] string authorization, [FromHeader] string authorizationRefresh){
+            var str=authorizationRefresh;
+            try
+            {
+                var auth = await _jwtTokenUtil.VerifyRefreshToken(authorizationRefresh);
+                if(!auth.Success)
+                    throw new Exception(auth.Error);
+                
+                var authJwt= await _jwtTokenUtil.VerifyJwtToken(authorization);
+                if(!authJwt.Success)
+                    throw new Exception(auth.Error);
+                if(!JwtTokenUtility.IsIdValid(auth.JwtId, authJwt.JwtId))
+                    throw new Exception("JTI Id is not valid");
+                
+                if(authJwt.IsExpiry){
+                    var newJwt = _jwtTokenUtil.GenerateJwtToken(authJwt.User, authJwt.Role, out string newJwtToken);
+                    await _authRepo.UpdateTokenAsync(authJwt.User.Id, newJwt);
+                    await _authRepo.SaveChangesAsync();
+
+                    return Created("", true);
+                }
+
+                return Ok(
+                    new AuthResult(){
+                        Errors= new List<string>(){
+                            auth.Error
+                        },
+                        Success=  auth.Success,
+                });
+            }
+            catch (System.Exception ex)
+            {
+                return Ok(
+                    new AuthResult(){
+                        Errors= new List<string>(){
+                            ex.Message
+                            },
+                        Success=  false,
+                });
+            }
         }
 
         [HttpPost("logOut")]
-        public async Task<IActionResult> LogOut([FromBody] TokenRequest tokenRequest){
-            var token=await _authRepo.GetToken(tokenRequest.RefreshToken);
-            _authRepo.DeleteToken(token);
-            await _authRepo.SaveChangesAsync();
-            _result=JwtTokenUtility.Result(false,"User is LogOut");
+        public async Task<IActionResult> LogOut([FromHeader] string authorization){
+            try
+            {
+                var auth= await _jwtTokenUtil.VerifyJwtToken(authorization);
+                if(!auth.Success){
+                    throw new Exception("Token doesn't exist");
+                }
+                var token= await _authRepo.GetTokenByuserIdAsync(auth.User.Id);
+                _authRepo.DeleteToken(token);
+                await _authRepo.SaveChangesAsync();
+                
+                return Ok(new AuthResult(){
+                    Success=true
+                });
+            }
+            catch (System.Exception ex)
+            {
+                return NotFound(new AuthResult(){
+                    Errors=new List<string>(){
+                        ex.Message
+                        },
+                    Success=false
+                });
+            }
             
-            return Ok(_result);
         }
 
     }
