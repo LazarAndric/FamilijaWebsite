@@ -45,6 +45,8 @@ namespace FamilijaApi.Profiles
             CreateMap<PasswordCreateDto, Password>();
             CreateMap<PasswordUpdateDto, Password>();
             CreateMap<Password, RoleUpdateDto>();
+
+
         }
     }
 }

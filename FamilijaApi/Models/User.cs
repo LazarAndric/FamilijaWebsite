@@ -17,6 +17,10 @@ namespace FamilijaApi.Models
         public string PhoneNumber { get; set; }
         public string ReferralCode { get; set; }
         public DateTime DateRegistration { get; set; }
+        public bool Vip { get; set; }
+        public bool Qualified { get; set; }
+
+
 
     }
 }

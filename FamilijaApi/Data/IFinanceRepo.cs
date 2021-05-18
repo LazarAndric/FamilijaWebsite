@@ -1,4 +1,5 @@
 ﻿using FamilijaApi.Models;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace FamilijaApi.Data
@@ -10,5 +11,6 @@ namespace FamilijaApi.Data
         Task<bool> SaveChanges();
         void UpdateFinance(Finance updateModelFinance);
         void DeleteUser(Finance deleteModelFinance);
+
     }
 }

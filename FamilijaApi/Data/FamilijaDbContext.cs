@@ -15,9 +15,16 @@ namespace FamilijaApi.Data
         public DbSet<Finance> Finance { get; set; }
         public DbSet<Password> Passwords { get; set; }
         public DbSet<UserRole> UserRoles { get; set; }
+        public DbSet<Tv> Tvs { get; set; }
+        public DbSet<UserTv> UserTvs { get; set; }
+
+
+
 
         public FamilijaDbContext(DbContextOptions<FamilijaDbContext> options) : base (options)
         {
         }
+
+        
     }
 }
