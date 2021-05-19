@@ -16,5 +16,8 @@ namespace FailijaApi.Data
         void UpdateCUser(bool v);
         Task<User> FindReferalbyCodeAsync(string code);
         Task<List<User>> FindReferalbyIdAsync(int referalID);
+        IEnumerable<User> GetUserbyReferalId(int id);
+        IEnumerable<User> GetUserbyVipAsync();
+
     }
 }

@@ -14,6 +14,7 @@ using System.Text;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.OpenApi.Models;
+using FamilijaApi.Data.Pyramid;
 
 namespace FamilijaApi
 {
@@ -120,6 +121,7 @@ namespace FamilijaApi
             services.AddScoped<IFinanceRepo, SqlFinanceRepo>();
             services.AddScoped<IPersonalInfoRepo, SqlPersonalInfoRepo>();
             services.AddScoped<IPasswordRepo, SqlPasswordRepo>();
+            services.AddScoped<IPyramidRepo, SqlPyramidRepo>();
 
         }
 

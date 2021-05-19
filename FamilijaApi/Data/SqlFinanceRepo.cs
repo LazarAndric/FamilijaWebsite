@@ -40,15 +40,11 @@ namespace FamilijaApi.Data
             return (await _context.SaveChangesAsync() >= 0);
         }
 
-        
+
 
         public void UpdateFinance(Finance updateModelFinance)
         {
 
         }
-<<<<<<< Updated upstream
     }
-=======
-    }       
->>>>>>> Stashed changes
 }

@@ -2,6 +2,8 @@
 using FailijaApi.Data;
 using FamilijaApi.Configuration;
 using FamilijaApi.Data;
+using FamilijaApi.Data.Pyramid;
+using FamilijaApi.DTOs;
 using FamilijaApi.DTOs.Pyramid;
 using FamilijaApi.DTOs.Requests;
 using FamilijaApi.Models;
@@ -25,22 +27,14 @@ namespace FamilijaApi.Controllers
         private JwtTokenUtility _jwtTokenUtil;
         private IUserRepo _userRepo;
         private IMapper _mapper;
-<<<<<<< Updated upstream
+        private IPyramidRepo _pyramidRepo;
 
-        public PyramidController(IAuthRepo authRepo, IRoleRepo roleRepo, IUserRepo userRepo, IMapper mapper, IOptionsMonitor<Jwtconfig> optionsMonitor, TokenValidationParameters tokenValidation)
+
+        public PyramidController(IAuthRepo authRepo, IPyramidRepo pyramidRepo, IRoleRepo roleRepo, IUserRepo userRepo, IMapper mapper, IOptionsMonitor<Jwtconfig> optionsMonitor, TokenValidationParameters tokenValidation)
         {
+            _pyramidRepo = pyramidRepo;
             _mapper = mapper;
             _userRepo = userRepo;
-=======
-        private IFinanceRepo _financeRepo;
-        private FamilijaDbContext _context;
-        public PyramidController(IAuthRepo authRepo, IRoleRepo roleRepo, IUserRepo userRepo, IMapper mapper, IFinanceRepo financeRepo, IOptionsMonitor<Jwtconfig> optionsMonitor, TokenValidationParameters tokenValidation, FamilijaDbContext familijaDbContext)
-        {
-            _mapper = mapper;
-            _userRepo = userRepo;
-            _financeRepo = financeRepo;
-            _context = familijaDbContext;
->>>>>>> Stashed changes
             _jwtTokenUtil = new JwtTokenUtility(authRepo, userRepo, roleRepo, optionsMonitor.CurrentValue, tokenValidation);
         }
 
@@ -49,7 +43,7 @@ namespace FamilijaApi.Controllers
         {
             try
             {
-                var auth=await _jwtTokenUtil.VerifyJwtToken(authorization);
+                var auth = await _jwtTokenUtil.VerifyJwtToken(authorization);
                 if (auth.Success)
                 {
                     var refId = await _userRepo.FindReferalbyIdAsync(auth.User.Id);
@@ -59,31 +53,28 @@ namespace FamilijaApi.Controllers
                         throw new Exception("User with that RefferalId is not found");
                     }
 
-<<<<<<< Updated upstream
-                    if (refId.Count() >= 4)
-=======
                     var sortref = from r in refId orderby r.DateRegistration where r.Vip = true select r;
-                   
+
 
                     if (sortref.Count() >= 4)
->>>>>>> Stashed changes
                     {
-                        var finMinus = _context.Users.Where(x => x.Id == auth.User.Id).ToList();
-                        finMinus.ForEach(x =>
+                        var users = _userRepo.GetUserbyReferalId(auth.User.Id);
+                        var lusers = new List<User>();
+                        lusers.AddRange(users);
+
+                        lusers.ForEach(x =>
                         {
                             x.Qualified = true;
                         });
-                        _context.SaveChanges();
+                        await _userRepo.SaveChangesAsync();
                         throw new Exception("Kvalifikovani Clan");
                     }
-<<<<<<< Updated upstream
-                    
-                    throw new Exception("Niste vip clan");
-=======
 
-                   
+                    throw new Exception("Niste kvalifikovani clan");
 
-                    throw new Exception("Niste vip clan");
+
+
+                    throw new Exception("Niste kvalifikovani clan");
                 }
 
                 return Unauthorized();
@@ -95,7 +86,7 @@ namespace FamilijaApi.Controllers
 
         }
 
-        [HttpPut]
+        [HttpPost]
         public async Task<IActionResult> UpdateTotalSpent([FromHeader] string authorization)
         {
             try
@@ -113,9 +104,9 @@ namespace FamilijaApi.Controllers
                             throw new Exception("User with that RefferalId is not found");
                         }
 
-                        var sortref = from r in refId orderby r.DateRegistration  select r;
+                        var sortref = from r in refId orderby r.DateRegistration select r;
 
-
+                        //mi
                         var myref = sortref.Take(1).ToList();
                         myref.AddRange(sortref.Skip(2).Take(1));
                         var idList = new List<int>();
@@ -128,22 +119,37 @@ namespace FamilijaApi.Controllers
                         foreach (var item in idList)
                         {
 
-                            var finMinus = _context.Finance.Where(x => x.UserId == item).ToList();
-                            finMinus.ForEach(x =>
+                            var finMinus = _pyramidRepo.GetFinanceAsync(item);
+                            var lfinMinus = new List<Finance>();
+                            lfinMinus.AddRange(finMinus);
+                            lfinMinus.ForEach(x =>
                             {
                                 x.TotalSpent -= 20;
-                                
+
                             });
-                            
-                            var finPlus = _context.Finance.Where(x => x.UserId == auth.User.Id).ToList();
-                            finPlus.ForEach(x =>
+
+                            UserTvCreateDto userTvCerateDto = new UserTvCreateDto() { TvId = 1, UserId = item };
+                            var usertv = _mapper.Map<UserTv>(userTvCerateDto);
+                            await _pyramidRepo.CreateUserTvAsync(usertv);
+
+                            UserTvCreateDto userTvCerateDto2 = new UserTvCreateDto() { TvId = 2, UserId = item };
+                            var usertv2 = _mapper.Map<UserTv>(userTvCerateDto2);
+                            await _pyramidRepo.CreateUserTvAsync(usertv2);
+
+                            var finPlus = _pyramidRepo.GetFinanceAsync(auth.User.Id);
+                            var lfinPlus = new List<Finance>();
+                            lfinPlus.AddRange(finPlus);
+
+                            lfinPlus.ForEach(x =>
                             {
                                 x.TotalSpent += 20;
                             });
 
-                            _context.SaveChanges();
+                            await _pyramidRepo.SaveChangesAsync();
 
                         }
+
+                        //sponsor
                         var sponsorref = sortref.Skip(1).Take(1).ToList();
                         sponsorref.AddRange(sortref.Skip(3).Take(1));
                         var idSList = new List<int>();
@@ -155,27 +161,37 @@ namespace FamilijaApi.Controllers
                         foreach (var item in idSList)
                         {
 
-                            var finMinus = _context.Finance.Where(x => x.UserId == item).ToList();
-                            finMinus.ForEach(x =>
+                            var finMinus = _pyramidRepo.GetFinanceAsync(item);
+                            var lfinMinus = new List<Finance>();
+                            lfinMinus.AddRange(finMinus);
+                            lfinMinus.ForEach(x =>
                             {
                                 x.TotalSpent -= 20;
                             });
-                           
-                            var finPlus = _context.Finance.Where(x => x.UserId == auth.User.ReferralId).ToList();
-                            finPlus.ForEach(x =>
+
+                            UserTvCreateDto userTvCerateDto = new UserTvCreateDto() { TvId = 1, UserId = item };
+                            var usertv = _mapper.Map<UserTv>(userTvCerateDto);
+                            await _pyramidRepo.CreateUserTvAsync(usertv);
+
+                            UserTvCreateDto userTvCerateDto2 = new UserTvCreateDto() { TvId = 3, UserId = item };
+                            var usertv2 = _mapper.Map<UserTv>(userTvCerateDto2);
+                            await _pyramidRepo.CreateUserTvAsync(usertv2);
+
+                            var finPlus = _pyramidRepo.GetFinanceAsync(auth.User.ReferralId);
+                            var lfinPlus = new List<Finance>();
+                            lfinPlus.AddRange(finPlus);
+
+                            lfinPlus.ForEach(x =>
                             {
                                 x.TotalSpent += 20;
                             });
 
-                            _context.SaveChanges();
-
+                            await _pyramidRepo.SaveChangesAsync();
                         }
-
                         return Ok();
                     }
 
                     return Ok("You are not eligible for earnings");
->>>>>>> Stashed changes
                 }
 
                 return Unauthorized();
@@ -184,11 +200,50 @@ namespace FamilijaApi.Controllers
             {
                 return Ok(ex.Message);
             }
-            
+
         }
 
+        [HttpPost("/red")]
+        public async Task<IActionResult> SetUserTvinRed([FromHeader] string authorization)
+        {
+            try
+            {
+                var auth = await _jwtTokenUtil.VerifyJwtToken(authorization);
+                if (auth.Success)
+                {
+                    var novipuser = _userRepo.GetUserbyVipAsync();
+                    var idnovipuser = new List<int>();
+                    foreach (var item in novipuser)
+                    {
+                        idnovipuser.Add(item.Id);
+                    }
+
+                    foreach (var item in idnovipuser)
+                    {
+                        var deliteModelUserTv = _pyramidRepo.GetUserTvAsync(item);
+                        UserTv userTv = deliteModelUserTv.First();
+                        _pyramidRepo.DeleteUserTv(userTv);
+                        await _pyramidRepo.SaveChangesAsync();
+                    }
+
+                    foreach (var item in idnovipuser)
+                    {
+                        UserTvCreateDto userTvCerateDto = new UserTvCreateDto() { TvId = 4, UserId = item };
+                        var usertv = _mapper.Map<UserTv>(userTvCerateDto);
+                        await _pyramidRepo.CreateUserTvAsync(usertv);
+                        await _pyramidRepo.SaveChangesAsync();
+                    }
+                }
+
+                return Unauthorized();
+            }
+
+            catch (System.Exception ex)
+            {
+                return Ok(ex.Message);
+            }
+        }
     }
 
 
-    
 }

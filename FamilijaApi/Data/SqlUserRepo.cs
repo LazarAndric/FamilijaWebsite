@@ -88,7 +88,17 @@ namespace FamilijaApi.Data
             }
             return newlist;
         }
-    
+
+        public IEnumerable<User> GetUserbyReferalId(int id)
+        {
+            return _context.Users.Where(x => x.ReferralId == id).ToArray();
+        }
+
+        public IEnumerable<User> GetUserbyVipAsync()
+        {
+            return _context.Users.Where(x => x.Vip == false).ToArray();
+        }
+
 
 
     }
