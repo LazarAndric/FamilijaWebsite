@@ -120,9 +120,10 @@ namespace FamilijaApi.Controllers
                     }
 
                     var refId = await _userRepo.FindReferalbyCodeAsync(user.SponsorCode);
-                    if(refId==null)
-                        refId= await _userRepo.GetUserByIdAsync(74);
-                    var newUser = new User() { EMail = user.Email, ContractNumber = user.ContractNumber, ReferralCode = JwtTokenUtility.RandomString(6), ReferralId = refId.Id, DateRegistration=DateTime.UtcNow.ToLocalTime() };
+                    var newUser= new User();
+                    if(refId!=null)
+                        newUser = new User() { EMail = user.Email, ContractNumber = user.ContractNumber, ReferralCode = JwtTokenUtility.RandomString(6), ReferralId = refId.Id, DateRegistration=DateTime.UtcNow.ToLocalTime() };
+                    newUser = new User() { EMail = user.Email, ContractNumber = user.ContractNumber, ReferralCode = JwtTokenUtility.RandomString(6), DateRegistration=DateTime.UtcNow.ToLocalTime() };
                     var isValid=PasswordUtility.ValidatePassword(user.Password, out var message);
                     if(!isValid)
                     {
