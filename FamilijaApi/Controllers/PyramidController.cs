@@ -29,8 +29,9 @@ namespace FamilijaApi.Controllers
         private IUserRepo _userRepo;
         private IMapper _mapper;
         private IFinanceRepo _financeRepo;
+        private IPyramidRepo _pyramidRepo;
 
-        public PyramidController(IAuthRepo authRepo, IRoleRepo roleRepo, IUserRepo userRepo, IMapper mapper, IFinanceRepo financeRepo, IOptionsMonitor<Jwtconfig> optionsMonitor, TokenValidationParameters tokenValidation)
+        public PyramidController(IPyramidRepo pyramidRepo,IAuthRepo authRepo, IRoleRepo roleRepo, IUserRepo userRepo, IMapper mapper, IFinanceRepo financeRepo, IOptionsMonitor<Jwtconfig> optionsMonitor, TokenValidationParameters tokenValidation)
         {
             _pyramidRepo = pyramidRepo;
             _mapper = mapper;
