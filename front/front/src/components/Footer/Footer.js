@@ -59,20 +59,34 @@ const useStyles = makeStyles((theme) => ({
   },
 
   footer: {
-    width: "100vw",
+    minWidth: "100%",
     background: "#161a1d",
     borderTop: `1px solid ${theme.palette.divider}`,
     marginTop: theme.spacing(8),
+    boxShadow:
+      "10px 4px 8px 10px rgba(0, 0, 0, 0.3), 0 6px 20px 0 rgba(0, 0, 0, 0.19)",
+    overflow: "hidden",
     paddingTop: theme.spacing(3),
-    paddingBottom: theme.spacing(3),
+    paddingBottom: theme.spacing(6),
     [theme.breakpoints.up("sm")]: {
       paddingTop: theme.spacing(6),
     },
   },
+  footerItemsContainer: {
+    display: "flex",
+    justifyContent: "space-between",
+    alignContent: "center",
+    aliignItems: "center",
+    width: "80vw",
+    margin: "0 auto",
+  },
   footerItem: {
     display: "block",
-    margin: theme.spacing(1, 1.5),
+    margin: "0 auto",
+    textAlign: "center",
+    marginTop: theme.spacing(2),
   },
+
   footerIcon: {
     height: "40px",
   },
@@ -84,26 +98,22 @@ function Icons() {
   const icons = [
     {
       name: "facebook",
-      url:
-        "http://cdn.boschtools.com/Boschtools/product-registration/facebook@2x.png",
+      url: "http://cdn.boschtools.com/Boschtools/product-registration/facebook@2x.png",
       link: "https://www.google.me/",
     },
     {
       name: "instagram",
-      url:
-        "http://cdn.boschtools.com/Boschtools/product-registration/instagram@2x.png",
+      url: "http://cdn.boschtools.com/Boschtools/product-registration/instagram@2x.png",
       link: "https://www.google.me/",
     },
     {
       name: "linkedin",
-      url:
-        "http://cdn.boschtools.com/Boschtools/product-registration/linkedin@2x.png",
+      url: "http://cdn.boschtools.com/Boschtools/product-registration/linkedin@2x.png",
       link: "https://www.google.me/",
     },
     {
       name: "twitter",
-      url:
-        "http://cdn.boschtools.com/Boschtools/product-registration/twitter@2x.png",
+      url: "http://cdn.boschtools.com/Boschtools/product-registration/twitter@2x.png",
       link: "https://www.google.me/",
     },
   ];
@@ -162,11 +172,11 @@ const Footer = () => {
         container
         maxWidth="lg"
       >
-        <Grid container spacing={4} justify="space-evenly">
+        <Grid container className={classes.footerItemsContainer}>
           {footers.map((footer) => (
             <Grid
               item
-              xs={4}
+              xs={6}
               sm={2}
               key={footer.title}
               className={classes.footerItem}

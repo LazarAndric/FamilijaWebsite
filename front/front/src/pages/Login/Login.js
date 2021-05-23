@@ -112,7 +112,6 @@ export default function SignInSide() {
               variant="contained"
               color="primary"
               className={classes.submit}
-              onClick={this.sendData}
             >
               Sign In
             </Button>
