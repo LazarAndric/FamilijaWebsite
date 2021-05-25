@@ -37,14 +37,14 @@ namespace FamilijaApi
                 options.AddPolicy("Policy1",
                                   builder =>
                                   {
-                                      builder.WithOrigins("http://example.com",
+                                      builder.WithOrigins("http://localhost:3000",
                                                           "http://www.contoso.com");
                                                            
                                   });
                                     options.AddPolicy("AnotherPolicy",
                                     builder =>
                                     {
-                                        builder.WithOrigins("http://www.contoso.com")
+                                        builder.WithOrigins("http://localhost:3000")
                                                             .AllowAnyHeader()
                                                             .AllowAnyMethod();
                 });
