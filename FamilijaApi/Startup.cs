@@ -14,6 +14,7 @@ using System.Text;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.OpenApi.Models;
+using Microsoft.AspNetCore.Http;
 
 namespace FamilijaApi
 {
@@ -30,6 +31,24 @@ namespace FamilijaApi
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc();
+
+            services.AddCors(options =>
+            {
+                options.AddPolicy("Policy1",
+                                  builder =>
+                                  {
+                                      builder.WithOrigins("http://example.com",
+                                                          "http://www.contoso.com");
+                                                           
+                                  });
+                                    options.AddPolicy("AnotherPolicy",
+                                    builder =>
+                                    {
+                                        builder.WithOrigins("http://www.contoso.com")
+                                                            .AllowAnyHeader()
+                                                            .AllowAnyMethod();
+                });
+            });
 
             services.AddSwaggerGen(c =>
             {
@@ -130,12 +149,15 @@ namespace FamilijaApi
             {
                 app.UseDeveloperExceptionPage();
             }
+           
 
             app.UseSwagger();
 
             app.UseHttpsRedirection();
 
             app.UseRouting();
+
+            app.UseCors();
 
             app.UseAuthentication();
             
@@ -147,6 +169,17 @@ namespace FamilijaApi
             });
             app.UseEndpoints(endpoints =>
             {
+            //    endpoints.MapGet("/echo",
+            //    context => context.Response.WriteAsync("echo"))
+            //    .RequireCors(MyAllowSpecificOrigins);
+
+            //    endpoints.MapControllers()
+            //             .RequireCors(MyAllowSpecificOrigins);
+
+            //    endpoints.MapGet("/echo2",
+            //        context => context.Response.WriteAsync("echo2"));
+
+
                 endpoints.MapControllers();
             });
         }
