@@ -34,19 +34,11 @@ namespace FamilijaApi
 
             services.AddCors(options =>
             {
-                options.AddPolicy("Policy1",
-                                  builder =>
-                                  {
-                                      builder.WithOrigins("http://localhost:3000",
-                                                          "http://www.contoso.com");
-                                                           
-                                  });
-                                    options.AddPolicy("AnotherPolicy",
-                                    builder =>
-                                    {
-                                        builder.WithOrigins("http://localhost:3000")
-                                                            .AllowAnyHeader()
-                                                            .AllowAnyMethod();
+                options.AddPolicy("MyPolicy", builder =>
+                {
+                    builder.AllowAnyOrigin()
+                    .AllowAnyMethod()
+                    .AllowAnyHeader();
                 });
             });
 

@@ -25,7 +25,7 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace FamilijaApi.Controllers
 {
-
+    [EnableCors("MyPolicy")]
     [Route("[Controller]")]
     [ApiController]
     [Authorize(AuthenticationSchemes= JwtBearerDefaults.AuthenticationScheme)]
@@ -56,7 +56,7 @@ namespace FamilijaApi.Controllers
             _jwtTokenUtil=new JwtTokenUtility(authRepo, userRepo, roleRepo, optionsMonitor.CurrentValue, tokenValidation);
         }
 
-        [EnableCors("AnotherPolicy")]
+        [EnableCors("MyPolicy")]
         [HttpPost("logIn")]
         [AllowAnonymous]
         public async Task<IActionResult> Login([FromBody] UserLoginRequest user) {
