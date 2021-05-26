@@ -17,15 +17,12 @@ using FamilijaApi.Models;
 using FamilijaApi.Utility;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Cors;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 
 namespace FamilijaApi.Controllers
 {
-    [EnableCors("MyPolicy")]
     [Route("[Controller]")]
     [ApiController]
     [Authorize(AuthenticationSchemes= JwtBearerDefaults.AuthenticationScheme)]
@@ -56,7 +53,6 @@ namespace FamilijaApi.Controllers
             _jwtTokenUtil=new JwtTokenUtility(authRepo, userRepo, roleRepo, optionsMonitor.CurrentValue, tokenValidation);
         }
 
-        [EnableCors("MyPolicy")]
         [HttpPost("logIn")]
         [AllowAnonymous]
         public async Task<IActionResult> Login([FromBody] UserLoginRequest user) {

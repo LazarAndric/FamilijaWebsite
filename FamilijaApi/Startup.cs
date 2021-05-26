@@ -32,16 +32,7 @@ namespace FamilijaApi
         {
             services.AddMvc();
 
-            services.AddCors(options =>
-            {
-                options.AddPolicy("MyPolicy", builder =>
-                {
-                    builder.AllowAnyOrigin()
-                    .AllowAnyMethod()
-                    .AllowAnyHeader();
-                });
-            });
-
+            
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "FamilijaApi", Version = "v1" });
@@ -149,7 +140,7 @@ namespace FamilijaApi
 
             app.UseRouting();
 
-            app.UseCors();
+           
 
             app.UseAuthentication();
             
@@ -161,15 +152,7 @@ namespace FamilijaApi
             });
             app.UseEndpoints(endpoints =>
             {
-            //    endpoints.MapGet("/echo",
-            //    context => context.Response.WriteAsync("echo"))
-            //    .RequireCors(MyAllowSpecificOrigins);
-
-            //    endpoints.MapControllers()
-            //             .RequireCors(MyAllowSpecificOrigins);
-
-            //    endpoints.MapGet("/echo2",
-            //        context => context.Response.WriteAsync("echo2"));
+           
 
 
                 endpoints.MapControllers();
