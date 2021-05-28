@@ -1,23 +1,80 @@
-import React from 'react';
-import style from './CardLeftAlign.css'
-import Button from '../Buttons/Button'
+import React from "react";
+import { makeStyles, useTheme } from "@material-ui/core/styles";
+import Card from "@material-ui/core/Card";
+import CardContent from "@material-ui/core/CardContent";
+import CardMedia from "@material-ui/core/CardMedia";
+import IconButton from "@material-ui/core/IconButton";
+import Typography from "@material-ui/core/Typography";
+import SkipPreviousIcon from "@material-ui/icons/SkipPrevious";
+import PlayArrowIcon from "@material-ui/icons/PlayArrow";
+import SkipNextIcon from "@material-ui/icons/SkipNext";
+import Btn from "../Buttons/Button";
+import Hidden from '@material-ui/core/Hidden';
 
-const CardLeftAlign = props => {
-    return (
-<div class="row g-0">
-    <div className="col-md-6">
-      <img src="https://www.cwu.org/wp-content/uploads/2017/04/540x300-placeholder.png" alt="..." style={{ width : '100%'}}/>
-    </div>
-    <div className="col-md-6">
-      <div  className="card-body">
-        <h5 className="card-title">{props.title}</h5>
-        <p className="card-text">{props.text}</p>
-        <p className="card-text"><small class="text-muted">{props.smallText}</small></p>
-        <Button type={props.type} text={props.buttonText}/>
-      </div>
-    </div>
+const useStyles = makeStyles((theme) => ({
+  root: {
+    display: "flex",
+    justifyContent:"center",
+    backgroundColor: "transparent",
+    border: "none",
+    boxShadow: "none",
+  },
+  details: {
+    display: "flex",
+    flexDirection: "column",
+  },
+  content: {
+    flex: "1 0 auto",
+  },
+  image: {
+    width: "100%",
+    height: "auto",
+  },
+  cardContainer:{
+    width: "100%",
+    margin : "auto"
+
+  },
+leftSide:{
+  width : "20%"
+
+},
+rightSide:{
+  width: '80%'
+}
+}));
+
+export default function CardLeft(props) {
+  const classes = useStyles();
+  const theme = useTheme();
+  const visibility = props.visibility;
+  const clas = classes.visibility;
+
+
+ 
+  return (
+    <div className={classes.cardContainer}>
+<Card className={classes.root}>
+  <div className={classes.leftSide}>
+  <CardMedia src={props.src} title="Live from space album cover" />
+      <img src={props.src} className={classes.image}></img>
   </div>
-    );
-};
 
-export default CardLeftAlign;
+      <div className={classes.details, classes.rightSide}>
+        <CardContent className={classes.content}>
+          <Typography component="h5" variant="h5">
+            {props.title}
+          </Typography>
+          <Typography variant="subtitle3" color="textSecondary">
+            {props.text}
+          </Typography>
+        </CardContent>
+ 
+       
+      </div>
+     
+    </Card>
+    </div>
+    
+  );
+}

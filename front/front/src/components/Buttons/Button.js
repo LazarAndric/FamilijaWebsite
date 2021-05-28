@@ -1,12 +1,24 @@
-import React from 'react';
+import React from "react";
+import { makeStyles } from "@material-ui/core/styles";
+import Button from "@material-ui/core/Button";
 
+const useStyles = makeStyles((theme) => ({
+  root: {
+    "& > *": {
+      margin: theme.spacing(1),
+    },
+  },
+}));
 
-const Button = props => {
-    return (
-<div class="">
-  <button class={props.type}>{props.text}</button>
+function Btn(props) {
+  const classes = useStyles();
 
-</div>
-    );
-};
-export default Button;
+  return (
+    <div className={classes.root}>
+      <Button variant="contained" color={props.type}>
+        {props.text}
+      </Button>
+    </div>
+  );
+}
+export default Btn;

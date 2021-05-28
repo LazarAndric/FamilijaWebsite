@@ -1,4 +1,4 @@
-import React from 'react'
+import React from "react";
 //import logo from "./logo.svg";
 //import "./App.css";
 import Slider from "../../components/Slider/Slider";
@@ -17,6 +17,7 @@ import {
   spacing,
 } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
+import features from "./WhatYouGet.json";
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -32,15 +33,24 @@ const useStyles = makeStyles((theme) => ({
   overflowHidden: {
     overflow: "hidden",
   },
+  CardItemsContainer: {
+    display: "flex",
+    justifyContent: "space-between",
+    alignContent: "center",
+    aliignItems: "center",
+    width: "68vw",
+    margin: "0 auto",
+  },
 }));
 
 const Home = () => {
-    const classes = useStyles();
+  const classes = useStyles();
+  
   return (
     <>
       <CssBaseline />
       <main>
-        <div claseName={classes.container}>
+        <div className={classes.container} maxWidth>
           <Typography variant="h2" align="center" color="textPrimary">
             Hertz App
           </Typography>
@@ -64,8 +74,56 @@ const Home = () => {
                 <Card></Card>
               </Grid>
             </Grid>
+        
+            <div className={classes.CardItemsContainer}>
+                  <Grid
+                container
+                justify="center"
+           
+                className={classes.spaceTopBottom}
+                alignItems="center"
+                alignContent="center"
+                spacing={6}
+              >
+                 {features.map((data)=>{
+               return <>
+               
+            <Grid
+             item
+             justify="center"
+             alignItems="center"
+             alignContent="center"
+             lg={6}
+             xs={12}
+            
+           >
+             <CardLeft
+               src={data.srcImg}
+               title={data.title}
+               btnType="primary"
+               text={data.text}
+               visibility="hidden"
+             ></CardLeft>
+           </Grid>
+        
+             
+               
+               
+        
+               </>
+
+            
+             })}
+                
+                </Grid></div>
+            
+         
+         
+     
+             </div>
+      
           </div>
-        </div>
+   
       </main>
     </>
   );
