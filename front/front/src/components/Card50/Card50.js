@@ -10,7 +10,6 @@ import PlayArrowIcon from "@material-ui/icons/PlayArrow";
 import SkipNextIcon from "@material-ui/icons/SkipNext";
 import Btn from "../Buttons/Button";
 import Hidden from "@material-ui/core/Hidden";
-import "./CardLeftAlign";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -19,39 +18,54 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: "transparent",
     border: "none",
     boxShadow: "none",
-    padding: "0",
+    "@media (max-width: 780px)": {
+      display: "block",
+      margin: "0 auto",
+    },
   },
   details: {
     display: "flex",
     flexDirection: "column",
     verticalAlign: "middle",
-    padding: "0",
+    justifyContent: "center",
+    "@media (max-width: 780px)": {
+      width: "100%",
+      display: "block",
+    },
   },
   content: {
     flex: "1 0 auto",
-    "@media (max-width: 780px)": {
-      padding: "1rem 0rem 1rem 1rem",
-    },
   },
   image: {
-    width: "80%",
+    width: "100%",
     height: "auto",
-    "@media (max-width: 780px)": {
-      width: "100%",
-      margin: "1.5rem auto",
-    },
   },
   cardContainer: {
     width: "100%",
     margin: "2rem auto",
   },
   leftSide: {
-    width: "20%",
+    width: "50%",
+    "@media (max-width: 780px)": {
+      width: "100%",
+      display: "block",
+    },
   },
-  rightSide: { width: "80%" },
+  rightSide: {
+    width: "50%",
+    padding: theme.spacing(10, 0),
+    "@media (max-width: 780px)": {
+      width: "100%",
+      display: "block",
+      padding: theme.spacing(0, 0),
+    },
+  },
+  smallVSpace: {
+    padding: theme.spacing(5, 0),
+  },
 }));
 
-export default function CardLeft(props) {
+export default function Card50(props) {
   const classes = useStyles();
   const theme = useTheme();
   const visibility = props.visibility;
@@ -67,10 +81,14 @@ export default function CardLeft(props) {
 
         <div className={(classes.details, classes.rightSide)}>
           <CardContent className={classes.content}>
-            <Typography component="h5" variant="h5">
+            <Typography component="h1" variant="h2">
               {props.title}
             </Typography>
-            <Typography variant="h6" color="textSecondary">
+            <Typography
+              variant="h4"
+              color="textSecondary"
+              className={classes.smallVSpace}
+            >
               {props.text}
             </Typography>
           </CardContent>

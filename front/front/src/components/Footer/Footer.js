@@ -62,7 +62,7 @@ const useStyles = makeStyles((theme) => ({
     minWidth: "100%",
     background: "#161a1d",
     borderTop: `1px solid ${theme.palette.divider}`,
-    marginTop: theme.spacing(8),
+    marginTop: theme.spacing(0, 8),
     boxShadow:
       "10px 4px 8px 10px rgba(0, 0, 0, 0.3), 0 6px 20px 0 rgba(0, 0, 0, 0.19)",
     overflow: "hidden",

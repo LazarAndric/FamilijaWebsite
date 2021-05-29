@@ -2,7 +2,7 @@ import React from "react";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 
 import Home from "./pages/Home/Home";
-import About from "./pages/About/About";
+import Contact from "./pages/Contact/Contact";
 import Iptv from "./pages/IPTV/Iptv";
 import Nav from "./components/Nav/Nav";
 import Sidebar from "./components/Sidebar/Sidebar";
@@ -18,7 +18,7 @@ const App = () => {
         <Nav />
         <Switch>
           <Route path="/" exact component={Home} />
-          <Route path="/about" component={About} />
+          <Route path="/Contact" component={Contact} />
           <Route path="/iptv" component={Log} />
           <Route path="/login" component={Login} />
           <Route path="/register" component={Register} />

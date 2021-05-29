@@ -7,6 +7,7 @@ import AppBar from "@material-ui/core/AppBar";
 import { makeStyles } from "@material-ui/core/styles";
 import Link from "@material-ui/core/Link";
 import Sidebar from "../Sidebar/Sidebar";
+import { Hidden } from "@material-ui/core";
 
 const useStyles = makeStyles((theme) => ({
   "@global": {
@@ -20,11 +21,24 @@ const useStyles = makeStyles((theme) => ({
   appBar: {
     borderBottom: `1px solid ${theme.palette.divider}`,
   },
+  positionSideBar: {
+    display: "none",
 
+    "@media(max-Width: 780px)": {
+      display: "block",
+      position: "absolute",
+      top: 0,
+      right: 0,
+      transform: "translate(0%, 60%)",
+      fontSize: "1.8rem",
+      cursor: "pointer",
+      color: "#fff",
+    },
+  },
   toolbar: {
     flexWrap: "wrap",
     justifyContent: "space-between",
-    background: "#010606",
+    background: "#161a1d",
     alignItems: "center",
   },
 
@@ -54,66 +68,63 @@ const Nav = () => {
         >
           HERZ TV
         </Typography>
-        <Toolbar className={classes.toolbar}>
-          <LinkRouter to="/" className={classes.link}>
+        <Hidden xsDown>
+          <Toolbar className={classes.toolbar}>
+            <LinkRouter to="/" className={classes.link}>
+              <Link
+                variant="button"
+                color="textPrimary"
+                href="#"
+                className={classes.link}
+              >
+                Home
+              </Link>
+            </LinkRouter>
+            <LinkRouter to="/iptv">
+              <Link
+                variant="button"
+                color="textPrimary"
+                href="#"
+                className={classes.link}
+              >
+                IPTV
+              </Link>
+            </LinkRouter>
+            <LinkRouter to="/contact">
+              <Link
+                variant="button"
+                color="textPrimary"
+                href="#"
+                className={classes.link}
+              >
+                Contact
+              </Link>
+            </LinkRouter>
+          </Toolbar>
+          <LinkRouter to="/Login">
             <Link
               variant="button"
               color="textPrimary"
               href="#"
               className={classes.link}
             >
-              Home
+              <Button
+                color="primary"
+                variant="outlined"
+                className={classes.link}
+              >
+                Login
+              </Button>
             </Link>
           </LinkRouter>
-          <LinkRouter to="/iptv">
-            <Link
-              variant="button"
-              color="textPrimary"
-              href="#"
-              className={classes.link}
-            >
-              IPTV
-            </Link>
-          </LinkRouter>
-          <LinkRouter to="/about">
-            <Link
-              variant="button"
-              color="textPrimary"
-              href="#"
-              className={classes.link}
-            >
-              About
-            </Link>
-          </LinkRouter>
-        </Toolbar>
-        <LinkRouter to="/Login">
-          <Link
-            variant="button"
-            color="textPrimary"
-            href="#"
-            className={classes.link}
-          >
-            <Button color="primary" variant="outlined" className={classes.link}>
-              Login
-            </Button>
-          </Link>
-        </LinkRouter>
+        </Hidden>
 
-        {/* <Sidebar /> */}
+        <Hidden smUp>
+          <Sidebar classes={classes.positionSideBar} />
+        </Hidden>
       </Toolbar>
     </AppBar>
   );
 };
 
 export default Nav;
-
-// <div class="ui secondary pointing menu">
-//   <a class="active item" href="https://www.google.com">
-//     Home
-//   </a>
-//   <a class="item">Messages</a>
-//   <a class="item">Friends</a>
-//   <div class="right menu">
-//     <a class="ui item">Logout</a>
-//   </div>
-// </div>

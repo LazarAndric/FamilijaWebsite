@@ -1,9 +1,18 @@
-.cardBody{
-    text-align: left;
+.cardBody {
+  text-align: left;
 }
-.card-body{
-    text-align: left;
+.card-body {
+  text-align: left;
 }
-.hidden{
-    display: none;
+.hidden {
+  display: none;
+}
+.col-20 {
+  width: 20%;
+}
+.col-80 {
+  width: 80%;
+}
+.col-50 {
+  width: 50%;
 }
