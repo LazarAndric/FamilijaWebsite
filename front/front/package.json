@@ -8,6 +8,7 @@
     "axios": "^0.21.1",
     "cors": "^2.8.5",
     "cra-template": "1.0.3",
+    "http-server": "^0.12.3",
     "material-ui-icons": "^1.0.0-beta.36",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",

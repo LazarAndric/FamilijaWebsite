@@ -1,17 +1,21 @@
 import React, { Component } from "react";
 
 class Log extends Component {
+  state={
+    
+  }
   constructor(props) {
     super(props);
     this.state = {
-      isAuthenticated: false,
-      resData: "",
+      loading: true,
+      jwt:null,
+      refresh:null
     };
   }
-  componentDidMount() {
+  async componentDidMount() {
     const payload = {
-      username: "ljubica.zivancevic@gmail.com",
-      password: "password",
+      username: "lazarndrc@gmail.com",
+      password: "unL@ky97",
     };
     const requestOptions = {
       method: "POST",
@@ -21,17 +25,16 @@ class Log extends Component {
       },
       body: JSON.stringify(payload),
     };
-    fetch(
-      "http://flixteam.myqnapcloud.com:49300/Authorizations/logIn",
+    await fetch(
+      "http://herzflix.myqnapcloud.com:49300/Authorizations/logIn",
       requestOptions
     )
-      .then((res) => res.json())
-      .then((data) => {
-        console.log(data);
-      });
+      .then(res=> (res.ok ? res : Promise.reject(res)))
+      .then(res => res.json())
+      .then(json => this.setState({refresh: json.createToken.refreshToken, jwt: json.createToken.jwtToken, loading: false}));
   }
   render() {
-    return <div>aaaaaaaaaa :{this.state.resData}</div>;
+    return <div>{this.state.loading || !this.state.jwt || !this.state.refresh ? <div>loading...</div> : <div>{this.state.jwt}<br/> {this.state.refresh}</div>}</div>;
   }
 }
 export default Log;

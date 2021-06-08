@@ -59,7 +59,7 @@ export default function SignInSide() {
       body: JSON.stringify({ username: "POST example", password: "pass" }),
     };
     fetch(
-      "http://flixteam.myqnapcloud.com:49185/Authorizations/logIn",
+      "http://herzflix.myqnapcloud.com:49300/Authorizations/logIn",
       requestOptions
     )
       .then((response) => response.json())
