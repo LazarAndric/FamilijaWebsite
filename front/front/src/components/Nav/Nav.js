@@ -8,6 +8,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import Link from "@material-ui/core/Link";
 import Sidebar from "../Sidebar/Sidebar";
 import { Hidden } from "@material-ui/core";
+import Cookies from 'universal-cookie';
 
 const useStyles = makeStyles((theme) => ({
   "@global": {
@@ -54,8 +55,76 @@ const useStyles = makeStyles((theme) => ({
     fontSize: "16px",
   },
 }));
+const logOutFunction=()=>{
+    const cookies = new Cookies();
+    const requestOptions = {
+      method: "POST",
+      headers: {
+        accept: "application/json",
+        "Content-Type": "application/json",
+        "Refresh" : cookies.get('refresh')
+      },
+    };
+    fetch(
+      "http://herzflix.myqnapcloud.com:49300/Authorizations/logOut",
+      requestOptions
+    )
+    .then(res => console.log(res))
+    cookies.remove('refresh')
+    cookies.remove('jwt')
+}
+const Login = () =>
+{
+  const classes = useStyles();
+  return(
+      <div>
+        <LinkRouter to="/Login">
+          <Link
+            variant="button"
+            color="textPrimary"
+            href="#"
+            className={classes.link}
+          >
+            <Button
+              color="primary"
+              variant="outlined"
+              className={classes.link}
+            >
+              Login
+            </Button>
+          </Link>
+        </LinkRouter>
+      </div>
+  )
+}
 
-const Nav = () => {
+const LogOut = () =>
+{
+  const classes = useStyles();
+  return(
+  <div>
+    <LinkRouter to="/">
+      <Link
+        variant="button"
+        color="textPrimary"
+        href="#"
+        className={classes.link}
+      >
+        <Button
+          color="primary"
+          variant="outlined"
+          className={classes.link}
+          onClick={logOutFunction}
+        >
+          LogOut
+        </Button>
+      </Link>
+    </LinkRouter>
+  </div>
+  )
+}
+
+const Nav = props => {
   const classes = useStyles();
   return (
     <AppBar position="relative">
@@ -101,22 +170,8 @@ const Nav = () => {
               </Link>
             </LinkRouter>
           </Toolbar>
-          <LinkRouter to="/Login">
-            <Link
-              variant="button"
-              color="textPrimary"
-              href="#"
-              className={classes.link}
-            >
-              <Button
-                color="primary"
-                variant="outlined"
-                className={classes.link}
-              >
-                Login
-              </Button>
-            </Link>
-          </LinkRouter>
+          {props.isLogin ? <Login/> : <LogOut/>}
+          
         </Hidden>
 
         <Hidden smUp>

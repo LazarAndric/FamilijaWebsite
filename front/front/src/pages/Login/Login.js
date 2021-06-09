@@ -13,6 +13,7 @@ import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
 import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
 import { Link as LinkRouter } from "react-router-dom";
+import {useForm, Controller} from 'react-hook-form'
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -49,23 +50,9 @@ const useStyles = makeStyles((theme) => ({
 
 export default function SignInSide() {
   const classes = useStyles();
-  const [users, setUser] = useState(null);
-  const [isLoading, setIsLoading] = useState(false);
-
-  useEffect(() => {
-    const requestOptions = {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ username: "POST example", password: "pass" }),
-    };
-    fetch(
-      "http://herzflix.myqnapcloud.com:49300/Authorizations/logIn",
-      requestOptions
-    )
-      .then((response) => response.json())
-      .then((data) => setUser);
-  });
-
+  const {register, handleSubmit, control} = useForm()
+  const [submiting, setSubmiting] = useState(false);
+  
   return (
     <Grid container component="main" className={classes.root}>
       <CssBaseline />
@@ -78,22 +65,43 @@ export default function SignInSide() {
           <Typography component="h1" variant="h5">
             Sign in
           </Typography>
-          <form className={classes.form} noValidate>
+          <form className={classes.form} 
+            onSubmit={handleSubmit(async(data)=> {
+            setSubmiting(true);
+
+            const response = await fetch("http://herzflix.myqnapcloud.com:49300/Authorizations​/logIn", {
+              method:"POST",
+              headers:{
+                "Content-Type": "application/json"
+              },
+              body: JSON.stringify({
+                username: data.username,
+                password: data.password
+              }),
+            })
+            const dataGet = await response.json()
+
+            console.log(data, 'server data')
+
+            setSubmiting(false);
+          })}>
             <TextField
               variant="standard"
               margin="normal"
+              {...register('username')}
               required
               fullWidth
-              id="email"
+              id="username"
               label="Email Address"
-              name="email"
-              autoComplete="email"
+              name="username"
+              autoComplete="username"
               autoFocus
-              useRef="email"
+              useRef="username"
             />
             <TextField
               variant="standard"
               margin="normal"
+              {...register('password')}
               required
               fullWidth
               name="password"
@@ -103,11 +111,13 @@ export default function SignInSide() {
               autoComplete="current-password"
             />
             <FormControlLabel
-              control={<Checkbox value="remember" color="primary" />}
+              control={
+                <Controller render={({field}) => (<Checkbox {...field}/>)} control={control} name="remember" color="primary" defaultValue={false}/>}
               label="Remember me"
             />
             <Button
               type="submit"
+              disabled={submiting}
               fullWidth
               variant="contained"
               color="primary"

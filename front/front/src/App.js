@@ -1,5 +1,6 @@
-import React from "react";
+import React, {useState, useEffect} from "react";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+import Cookies from 'universal-cookie';
 
 import Home from "./pages/Home/Home";
 import Contact from "./pages/Contact/Contact";
@@ -12,10 +13,13 @@ import Log from "./pages/Login/Log";
 import Register from "./pages/Register/Register";
 
 const App = () => {
+  const cookie= new Cookies()
+  const jwt = cookie.get('jwt')
+  const refresh = cookie.get('refresh')
   return (
     <>
       <Router>
-        <Nav />
+        <Nav isLogin={!jwt || !refresh}/>
         <Switch>
           <Route path="/" exact component={Home} />
           <Route path="/Contact" component={Contact} />
